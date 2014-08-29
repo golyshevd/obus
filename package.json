@@ -1,0 +1,33 @@
+{
+    "author": "Golyshev Dmitrii <golyshev.dmitry@yandex.ru>",
+    "bugs": {
+        "url": "https://github.com/fistlabs/obus/issues"
+    },
+    "contributors": [
+        "Golyshev Dmitrii <golyshev.dmitry@yandex.ru>"
+    ],
+    "dependencies": {
+        "lodash-node": "2.4.1",
+        "inherit": "2.2.2"
+    },
+    "description": "deep access to object properties",
+    "devDependencies": {
+        "glob": "4.0.2",
+        "gulp": "3.8.7",
+        "gulp-mocha": "0.5.2",
+        "gulp-istanbul": "0.2.2",
+        "gulp-jscs": "1.1.0",
+        "gulp-eslint": "0.1.8",
+        "through2": "0.6.1",
+        "gulp-util": "3.0.0",
+        "chai": "1.9.1"
+    },
+    "license": "MIT",
+    "main": "lib/obus",
+    "name": "obus",
+    "repository": {
+        "type": "git",
+        "url": "git://github.com/fistlabs/obus.git"
+    },
+    "version": "0.0.0"
+}
