@@ -29,9 +29,266 @@ describe('core/parser', function () {
             });
         });
     });
+    describe('{Parser}.parsePart', function () {
+        var header = 'Should parse "%s" to %j';
+        var samples = [
+            [
+                'a[b]',
+                [
+                    {
+                        type: 'ROOT',
+                        part: 'a'
+                    },
+                    {
+                        type: 'PART',
+                        part: 'b'
+                    }
+                ]
+            ],
+            [
+                'a[b][c]',
+                [
+                    {
+                        type: 'ROOT',
+                        part: 'a'
+                    },
+                    {
+                        type: 'PART',
+                        part: 'b'
+                    },
+                    {
+                        type: 'PART',
+                        part: 'c'
+                    }
+                ]
+            ],
+            [
+                'a[b][c',
+                [
+                    {
+                        type: 'ROOT',
+                        part: 'a[b][c'
+                    }
+                ]
+            ],
+            [
+                'a[][]',
+                [
+                    {
+                        type: 'ROOT',
+                        part: 'a'
+                    },
+                    {
+                        type: 'PART',
+                        part: ''
+                    },
+                    {
+                        type: 'PART',
+                        part: ''
+                    }
+                ]
+            ],
+            [
+                '[][]',
+                [
+                    {
+                        type: 'ROOT',
+                        part: ''
+                    },
+                    {
+                        type: 'PART',
+                        part: ''
+                    },
+                    {
+                        type: 'PART',
+                        part: ''
+                    }
+                ]
+            ],
+            [
+                '[[a][b]',
+                [
+                    {
+                        type: 'ROOT',
+                        part: ''
+                    },
+                    {
+                        type: 'PART',
+                        part: '[a'
+                    },
+                    {
+                        type: 'PART',
+                        part: 'b'
+                    }
+                ]
+            ],
+            [
+                '[[a]][b]',
+                [
+                    {
+                        type: 'ROOT',
+                        part: '[[a]]'
+                    },
+                    {
+                        type: 'PART',
+                        part: 'b'
+                    }
+                ]
+            ],
+            [
+                ']]][a][b]',
+                [
+                    {
+                        type: 'ROOT',
+                        part: ']]]'
+                    },
+                    {
+                        type: 'PART',
+                        part: 'a'
+                    },
+                    {
+                        type: 'PART',
+                        part: 'b'
+                    }
+                ]
+            ],
+            [
+                ']]][a\\][b]',
+                [
+                    {
+                        type: 'ROOT',
+                        part: ']]]'
+                    },
+                    {
+                        type: 'PART',
+                        part: 'a][b'
+                    }
+                ]
+            ],
+            [
+                '',
+                [
+                    {
+                        type: 'ROOT',
+                        part: ''
+                    }
+                ]
+            ],
+            [
+                '[]',
+                [
+                    {
+                        type: 'ROOT',
+                        part: ''
+                    },
+                    {
+                        type: 'PART',
+                        part: ''
+                    }
+                ]
+            ],
+            [
+                '[][',
+                [
+                    {
+                        type: 'ROOT',
+                        part: '[]['
+                    }
+                ]
+            ],
+            [
+                'a',
+                [
+                    {
+                        type: 'ROOT',
+                        part: 'a'
+                    }
+                ]
+            ],
+            [
+                '[] []',
+                [
+                    {
+                        type: 'ROOT',
+                        part: '[] '
+                    },
+                    {
+                        type: 'PART',
+                        part: ''
+                    }
+                ]
+            ],
+            [
+                'a[b] [c]',
+                [
+                    {
+                        type: 'ROOT',
+                        part: 'a[b] '
+                    },
+                    {
+                        type: 'PART',
+                        part: 'c'
+                    }
+                ]
+            ],
+            [
+                'a[b] [c] ',
+                [
+                    {
+                        type: 'ROOT',
+                        part: 'a[b] [c] '
+                    }
+                ]
+            ],
+            [
+                'a[b] [c] [d]',
+                [
+                    {
+                        type: 'ROOT',
+                        part: 'a[b] [c] '
+                    },
+                    {
+                        type: 'PART',
+                        part: 'd'
+                    }
+                ]
+            ],
+            [
+                'a\\',
+                [
+                    {
+                        type: 'ROOT',
+                        part: 'a\\'
+                    }
+                ]
+            ],
+            [
+                'a[b]][d]',
+                [
+                    {
+                        type: 'ROOT',
+                        part: 'a[b]]'
+                    },
+                    {
+                        type: 'PART',
+                        part: 'd'
+                    }
+                ]
+            ]
+        ];
+
+        _.forEach(samples, function (sample) {
+            var title = util.format(header, sample[0], sample[1]);
+
+            it(title, function () {
+                var parser = new Parser();
+                assert.deepEqual(parser.parsePart(sample[0]), sample[1]);
+            });
+        });
+    });
 
     describe('{Parser}.splitPath', function () {
-        var header = 'Should parse "%s" to %j (params=%j)';
+        var header = 'Should parse "%s" to %j';
         var samples = [
             [
                 '',
@@ -96,107 +353,17 @@ describe('core/parser', function () {
         ];
 
         _.forEach(samples, function (sample) {
-            var title = util.format(header, sample[0], sample[1], sample[2]);
+            var title = util.format(header, sample[0], sample[1]);
 
             it(title, function () {
-                var parser = new Parser(sample[2]);
+                var parser = new Parser();
                 assert.deepEqual(parser.splitPath(sample[0]), sample[1]);
-            });
-        });
-    });
-    describe('{Parser}.parsePart', function () {
-        var header = 'Should parse "%s" to %j (params=%j)';
-        var samples = [
-            [
-                'a[b]',
-                ['a', 'b']
-            ],
-            [
-                'a[b][c]',
-                ['a', 'b', 'c']
-            ],
-            [
-                'a[b][c',
-                ['a[b][c']
-            ],
-            [
-                'a[][]',
-                ['a', '', '']
-            ],
-            [
-                '[][]',
-                ['', '', '']
-            ],
-            [
-                '[[a][b]',
-                ['', '[a', 'b']
-            ],
-            [
-                '[[a]][b]',
-                ['[[a]]', 'b']
-            ],
-            [
-                ']]][a][b]',
-                [']]]', 'a', 'b']
-            ],
-            [
-                ']]][a\\][b]',
-                [']]]', 'a][b']
-            ],
-            [
-                '',
-                ['']
-            ],
-            [
-                '[]',
-                ['', '']
-            ],
-            [
-                '[][',
-                ['[][']
-            ],
-            [
-                'a',
-                ['a']
-            ],
-            [
-                '[] []',
-                ['[] ', '']
-            ],
-            [
-                'a[b] [c]',
-                ['a[b] ', 'c']
-            ],
-            [
-                'a[b] [c] ',
-                ['a[b] [c] ']
-            ],
-            [
-                'a[b] [c] [d]',
-                ['a[b] [c] ', 'd']
-            ],
-            [
-                'a\\',
-                ['a\\']
-            ],
-            [
-                'a[b]][d]',
-                ['a[b]]', 'd']
-            ]
-        ];
-
-        _.forEach(samples, function (sample) {
-            var title = util.format(header, sample[0], sample[1], sample[2]);
-
-            it(title, function () {
-                var parser = new Parser(sample[2]);
-                assert.deepEqual(parser.parsePart(sample[0]), sample[1]);
             });
         });
     });
 
     describe('{Parser}.parsePath', function () {
-        var header = 'Should parse "%s" to %j (params=%j)';
+        var header = 'Should parse "%s" to %j';
 
         var samples = [
             [
@@ -205,175 +372,571 @@ describe('core/parser', function () {
             ],
             [
                 'a',
-                ['a']
+                [
+                    {
+                        type: 'ROOT',
+                        part: 'a'
+                    }
+                ]
             ],
             [
                 'a.b.c',
-                ['a', 'b', 'c']
-            ],
-            [
-                'a . b . c',
-                ['a ', ' b ', ' c']
+                [
+                    {
+                        type: 'ROOT',
+                        part: 'a'
+                    },
+                    {
+                        type: 'ROOT',
+                        part: 'b'
+                    },
+                    {
+                        type: 'ROOT',
+                        part: 'c'
+                    }
+                ]
             ],
             [
                 'a \\. b \\. c',
-                ['a . b . c']
+                [
+                    {
+                        type: 'ROOT',
+                        part: 'a . b . c'
+                    }
+                ]
             ],
             [
                 'a.b.c.',
-                ['a', 'b', 'c', '']
+                [
+                    {
+                        type: 'ROOT',
+                        part: 'a'
+                    },
+                    {
+                        type: 'ROOT',
+                        part: 'b'
+                    },
+                    {
+                        type: 'ROOT',
+                        part: 'c'
+                    },
+                    {
+                        type: 'ROOT',
+                        part: ''
+                    }
+                ]
             ],
             [
                 'a[b]',
-                ['a', 'b']
+                [
+                    {
+                        type: 'ROOT',
+                        part: 'a'
+                    },
+                    {
+                        type: 'PART',
+                        part: 'b'
+                    }
+                ]
             ],
             [
                 '[a].b',
-                ['a', 'b']
+                [
+                    {
+                        type: 'PART',
+                        part: 'a'
+                    },
+                    {
+                        type: 'ROOT',
+                        part: 'b'
+                    }
+                ]
             ],
             [
                 'a.b[c].d',
-                ['a', 'b', 'c', 'd']
+                [
+                    {
+                        type: 'ROOT',
+                        part: 'a'
+                    },
+                    {
+                        type: 'ROOT',
+                        part: 'b'
+                    },
+                    {
+                        type: 'PART',
+                        part: 'c'
+                    },
+                    {
+                        type: 'ROOT',
+                        part: 'd'
+                    }
+                ]
             ],
             [
                 'a.b[c.d].e',
-                ['a', 'b', 'c.d', 'e']
+                [
+                    {
+                        type: 'ROOT',
+                        part: 'a'
+                    },
+                    {
+                        type: 'ROOT',
+                        part: 'b'
+                    },
+                    {
+                        type: 'PART',
+                        part: 'c.d'
+                    },
+                    {
+                        type: 'ROOT',
+                        part: 'e'
+                    }
+                ]
             ],
             [
                 'a.b[c[].d',
-                ['a', 'b', 'c[', 'd']
+                [
+                    {
+                        type: 'ROOT',
+                        part: 'a'
+                    },
+                    {
+                        type: 'ROOT',
+                        part: 'b'
+                    },
+                    {
+                        type: 'PART',
+                        part: 'c['
+                    },
+                    {
+                        type: 'ROOT',
+                        part: 'd'
+                    }
+                ]
             ],
             [
                 '[a] [b]',
-                ['[a] ', 'b']
+                [
+                    {
+                        type: 'ROOT',
+                        part: '[a] '
+                    },
+                    {
+                        type: 'PART',
+                        part: 'b'
+                    }
+                ]
             ],
             [
                 '[] []',
-                ['[] ', '']
+                [
+                    {
+                        type: 'ROOT',
+                        part: '[] '
+                    },
+                    {
+                        type: 'PART',
+                        part: ''
+                    }
+                ]
             ],
             [
                 '[ ] [ ]',
-                ['[ ] ', ' ']
+                [
+                    {
+                        type: 'ROOT',
+                        part: '[ ] '
+                    },
+                    {
+                        type: 'PART',
+                        part: ' '
+                    }
+                ]
             ],
             [
                 '[].a',
-                ['', 'a']
+                [
+                    {
+                        type: 'PART',
+                        part: ''
+                    },
+                    {
+                        type: 'ROOT',
+                        part: 'a'
+                    }
+                ]
             ],
             [
                 '[] .a',
-                ['[] ', 'a']
+                [
+                    {
+                        type: 'ROOT',
+                        part: '[] '
+                    },
+                    {
+                        type: 'ROOT',
+                        part: 'a'
+                    }
+                ]
             ],
             [
                 ' [] .a',
-                [' [] ', 'a']
+                [
+                    {
+                        type: 'ROOT',
+                        part: ' [] '
+                    },
+                    {
+                        type: 'ROOT',
+                        part: 'a'
+                    }
+                ]
             ],
             [
                 '...',
-                ['', '', '', '']
+                [
+                    {
+                        type: 'ROOT',
+                        part: ''
+                    },
+                    {
+                        type: 'ROOT',
+                        part: ''
+                    },
+                    {
+                        type: 'ROOT',
+                        part: ''
+                    },
+                    {
+                        type: 'ROOT',
+                        part: ''
+                    }
+                ]
             ],
             [
                 '[a].b.[c]',
-                ['a', 'b', '', 'c']
+                [
+                    {
+                        type: 'PART',
+                        part: 'a'
+                    },
+                    {
+                        type: 'ROOT',
+                        part: 'b'
+                    },
+                    {
+                        type: 'ROOT',
+                        part: ''
+                    },
+                    {
+                        type: 'PART',
+                        part: 'c'
+                    }
+                ]
             ],
             [
                 '[a].b.c[d].e[f]',
-                ['a', 'b', 'c', 'd', 'e', 'f']
+                [
+                    {
+                        type: 'PART',
+                        part: 'a'
+                    },
+                    {
+                        type: 'ROOT',
+                        part: 'b'
+                    },
+                    {
+                        type: 'ROOT',
+                        part: 'c'
+                    },
+                    {
+                        type: 'PART',
+                        part: 'd'
+                    },
+                    {
+                        type: 'ROOT',
+                        part: 'e'
+                    },
+                    {
+                        type: 'PART',
+                        part: 'f'
+                    }
+                ]
             ],
             [
                 '].a]][b]',
-                [']', 'a]]', 'b']
+                [
+                    {
+                        type: 'ROOT',
+                        part: ']'
+                    },
+                    {
+                        type: 'ROOT',
+                        part: 'a]]'
+                    },
+                    {
+                        type: 'PART',
+                        part: 'b'
+                    }
+                ]
             ],
             [
                 'a\\',
-                ['a\\']
+                [
+                    {
+                        type: 'ROOT',
+                        part: 'a\\'
+                    }
+                ]
             ],
             [
                 'a[[',
-                ['a[[']
+                [
+                    {
+                        type: 'ROOT',
+                        part: 'a[['
+                    }
+                ]
             ],
             [
                 'a[b][c',
-                ['a[b][c']
+                [
+                    {
+                        type: 'ROOT',
+                        part: 'a[b][c'
+                    }
+                ]
             ],
             [
                 '[a]b[c]',
-                ['[a]b', 'c']
+                [
+                    {
+                        type: 'ROOT',
+                        part: '[a]b'
+                    },
+                    {
+                        type: 'PART',
+                        part: 'c'
+                    }
+                ]
             ],
             [
                 '\\[a\\]\\.b',
-                ['[a].b']
+                [
+                    {
+                        type: 'ROOT',
+                        part: '[a].b'
+                    }
+                ]
             ],
             [
                 '[a].b',
-                ['a', 'b']
+                [
+                    {
+                        type: 'PART',
+                        part: 'a'
+                    },
+                    {
+                        type: 'ROOT',
+                        part: 'b'
+                    }
+                ]
             ],
             [
                 '[].',
-                ['', '']
+                [
+                    {
+                        type: 'PART',
+                        part: ''
+                    },
+                    {
+                        type: 'ROOT',
+                        part: ''
+                    }
+                ]
             ],
             [
                 '[a]b.c',
-                ['[a]b', 'c']
+                [
+                    {
+                        type: 'ROOT',
+                        part: '[a]b'
+                    },
+                    {
+                        type: 'ROOT',
+                        part: 'c'
+                    }
+                ]
             ],
             [
                 '[a][',
-                ['[a][']
+                [
+                    {
+                        type: 'ROOT',
+                        part: '[a]['
+                    }
+                ]
             ],
             [
                 '[',
-                ['[']
+                [
+                    {
+                        type: 'ROOT',
+                        part: '['
+                    }
+                ]
             ],
             [
                 '.',
-                ['', '']
+                [
+                    {
+                        type: 'ROOT',
+                        part: ''
+                    },
+                    {
+                        type: 'ROOT',
+                        part: ''
+                    }
+                ]
             ],
             [
                 '\\.',
-                ['.']
+                [
+                    {
+                        type: 'ROOT',
+                        part: '.'
+                    }
+                ]
             ],
             [
                 '[a\\]',
-                ['[a]']
+                [
+                    {
+                        type: 'ROOT',
+                        part: '[a]'
+                    }
+                ]
             ],
             [
                 '\\[a].b',
-                ['[a]', 'b']
+                [
+                    {
+                        type: 'ROOT',
+                        part: '[a]'
+                    },
+                    {
+                        type: 'ROOT',
+                        part: 'b'
+                    }
+                ]
             ],
             [
                 '[a] [b].c.d[e]',
-                ['[a] ', 'b', 'c', 'd', 'e']
+                [
+                    {
+                        type: 'ROOT',
+                        part: '[a] '
+                    },
+                    {
+                        type: 'PART',
+                        part: 'b'
+                    },
+                    {
+                        type: 'ROOT',
+                        part: 'c'
+                    },
+                    {
+                        type: 'ROOT',
+                        part: 'd'
+                    },
+                    {
+                        type: 'PART',
+                        part: 'e'
+                    }
+                ]
             ],
             [
                 'a.b[c] [d]',
-                ['a', 'b[c] ', 'd']
+                [
+                    {
+                        type: 'ROOT',
+                        part: 'a'
+                    },
+                    {
+                        type: 'ROOT',
+                        part: 'b[c] '
+                    },
+                    {
+                        type: 'PART',
+                        part: 'd'
+                    }
+                ]
             ],
             [
                 'a.b[c] [d]e',
-                ['a', 'b[c] [d]e']
+                [
+                    {
+                        type: 'ROOT',
+                        part: 'a'
+                    },
+                    {
+                        type: 'ROOT',
+                        part: 'b[c] [d]e'
+                    }
+                ]
             ],
             [
                 '[a][b][c]d',
-                ['[a][b][c]d']
+                [
+                    {
+                        type: 'ROOT',
+                        part: '[a][b][c]d'
+                    }
+                ]
             ],
             [
                 '[a].b[c] [d] .e',
-                ['a', 'b[c] [d] ', 'e']
+                [
+                    {
+                        type: 'PART',
+                        part: 'a'
+                    },
+                    {
+                        type: 'ROOT',
+                        part: 'b[c] [d] '
+                    },
+                    {
+                        type: 'ROOT',
+                        part: 'e'
+                    }
+                ]
             ],
             [
                 '[a.b]',
-                ['a.b']
+                [
+                    {
+                        type: 'PART',
+                        part: 'a.b'
+                    }
+                ]
             ],
             [
                 '[a.b',
-                ['[a.b']
+                [
+                    {
+                        type: 'ROOT',
+                        part: '[a.b'
+                    }
+                ]
             ]
         ];
 
         _.forEach(samples, function (sample) {
-            var title = util.format(header, sample[0], sample[1], sample[2]);
+            var title = util.format(header, sample[0], sample[1]);
 
             it(title, function () {
-                var parser = new Parser(sample[2]);
+                var parser = new Parser();
                 assert.deepEqual(parser.parsePath(sample[0]), sample[1]);
             });
         });

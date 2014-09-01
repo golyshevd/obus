@@ -47,33 +47,37 @@ var Parser = inherit(/** @lends Parser.prototype */ {
      * */
     splitPath: function (path) {
         /*eslint complexity: 0*/
-        var parts = [];
-        var part = '';
+        var cursor;
+        var i;
         var isEscaped = false;
         var isInBrackets = false;
+        var l;
+        var part = '';
+        var parts = [];
 
         if (!path) {
 
             return parts;
         }
 
-        parts = _.reduce(path, function (parts, cursor) {
+        for (i = 0, l = path.length; i < l; i += 1) {
+            cursor = path.charAt(i);
 
             if (cursor === '\\' && !isEscaped) {
                 isEscaped = true;
 
-                return parts;
+                continue;
             }
 
             if (isEscaped) {
                 part += '\\' + cursor;
                 isEscaped = false;
 
-                return parts;
+                continue;
             }
 
             switch (cursor) {
-
+                /*eslint no-fallthrough: 0*/
                 case '.':
 
                     if (isInBrackets) {
@@ -84,7 +88,7 @@ var Parser = inherit(/** @lends Parser.prototype */ {
                     parts.push(part);
                     part = '';
 
-                    return parts;
+                    continue;
 
                 case '[':
                     isInBrackets = true;
@@ -103,9 +107,7 @@ var Parser = inherit(/** @lends Parser.prototype */ {
             }
 
             part += cursor;
-
-            return parts;
-        }, parts, this);
+        }
 
         if (isEscaped) {
             part += '\\';
@@ -125,16 +127,15 @@ var Parser = inherit(/** @lends Parser.prototype */ {
      * */
     parsePart: function (path) {
         /*eslint complexity: 0*/
-        var parts = [];
-        var part = '';
-        var self = this;
         var cursor = '';
-
         var i;
-        var l;
         var isEscaped = false;
         var isInBrackets = false;
         var isInRoot = true;
+        var l;
+        var part = '';
+        var parts = [];
+        var self = this;
 
         function back() {
             parts = [];
@@ -168,7 +169,10 @@ var Parser = inherit(/** @lends Parser.prototype */ {
                 }
 
                 if (!parts.length || part) {
-                    parts.push(part);
+                    parts.push({
+                        type: 'ROOT',
+                        part: part
+                    });
                 }
 
                 isInBrackets = true;
@@ -182,7 +186,10 @@ var Parser = inherit(/** @lends Parser.prototype */ {
 
                 if (isInBrackets) {
                     isInBrackets = false;
-                    parts.push(part);
+                    parts.push({
+                        type: 'PART',
+                        part: part
+                    });
                     part = '';
 
                     continue;
@@ -209,8 +216,7 @@ var Parser = inherit(/** @lends Parser.prototype */ {
         }
 
         if (isInBrackets) {
-
-            return [this.unescape(path)];
+            back();
         }
 
         if (isEscaped) {
@@ -218,7 +224,10 @@ var Parser = inherit(/** @lends Parser.prototype */ {
         }
 
         if (isInRoot) {
-            parts.push(part);
+            parts.push({
+                type: 'ROOT',
+                part: part
+            });
         }
 
         return parts;
@@ -263,7 +272,8 @@ var Parser = inherit(/** @lends Parser.prototype */ {
     __reducePart: function (parts, part, i) {
         part = this.parsePart(part);
 
-        if (!i && part.length > 1 && !part[0]) {
+        //  [a][b][c], skip "" root
+        if (i === 0 && part.length > 1 && !part[0].part) {
             part = part.slice(1);
         }
 
