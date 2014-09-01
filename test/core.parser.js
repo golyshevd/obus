@@ -104,7 +104,7 @@ describe('core/parser', function () {
             });
         });
     });
-    describe('{Parser}.parse', function () {
+    describe('{Parser}.parsePart', function () {
         var header = 'Should parse "%s" to %j (params=%j)';
         var samples = [
             [
@@ -190,7 +190,7 @@ describe('core/parser', function () {
 
             it(title, function () {
                 var parser = new Parser(sample[2]);
-                assert.deepEqual(parser.parse(sample[0]), sample[1]);
+                assert.deepEqual(parser.parsePart(sample[0]), sample[1]);
             });
         });
     });

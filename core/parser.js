@@ -123,7 +123,7 @@ var Parser = inherit(/** @lends Parser.prototype */ {
      *
      * @returns {Array<String>}
      * */
-    parse: function (path) {
+    parsePart: function (path) {
         /*eslint complexity: 0*/
         var parts = [];
         var part = '';
@@ -261,7 +261,7 @@ var Parser = inherit(/** @lends Parser.prototype */ {
      * @returns {Array<String>}
      * */
     __reducePart: function (parts, part, i) {
-        part = this.parse(part);
+        part = this.parsePart(part);
 
         if (!i && part.length > 1 && !part[0]) {
             part = part.slice(1);
