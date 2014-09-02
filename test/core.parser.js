@@ -15,22 +15,9 @@ describe('core/parser', function () {
 
             assert.instanceOf(parser, Parser);
         });
-
-        it('Should support params', function () {
-            var parser = new Parser();
-
-            assert.isObject(parser.params);
-            parser = new Parser({
-                trimTokens: true
-            });
-
-            assert.deepEqual(parser.params, {
-                trimTokens: true
-            });
-        });
     });
 
-    describe('{Parser}.parsePath', function () {
+    describe('Parser.parse', function () {
         var header = 'Should parse "%s" to %j';
 
         var samples = [
@@ -613,8 +600,7 @@ describe('core/parser', function () {
             var title = util.format(header, sample[0], sample[1]);
 
             it(title, function () {
-                var parser = new Parser();
-                var parts = parser.parsePath(sample[0]);
+                var parts = Parser.parse(sample[0]);
 
                 assert.deepEqual(parts, sample[1]);
             });
