@@ -45,102 +45,31 @@ var Parser = inherit(/** @lends Parser.prototype */ {
      *
      * @returns {Array<String>}
      * */
-    splitPath: function (path) {
+    parsePath: function (path) {
         /*eslint complexity: 0*/
         var cursor;
         var i;
         var isEscaped = false;
         var isInBrackets = false;
+        var isInRoot = true;
         var l;
-        var part = '';
         var parts = [];
+        var self = this;
+        var stableIndex = 0;
+        var stableLength = 0;
+        var token = '';
 
         if (!path) {
 
             return parts;
         }
 
-        for (i = 0, l = path.length; i < l; i += 1) {
-            cursor = path.charAt(i);
-
-            if (cursor === '\\' && !isEscaped) {
-                isEscaped = true;
-
-                continue;
-            }
-
-            if (isEscaped) {
-                part += '\\' + cursor;
-                isEscaped = false;
-
-                continue;
-            }
-
-            switch (cursor) {
-                /*eslint no-fallthrough: 0*/
-                case '.':
-
-                    if (isInBrackets) {
-
-                        break;
-                    }
-
-                    parts.push(part);
-                    part = '';
-
-                    continue;
-
-                case '[':
-                    isInBrackets = true;
-
-                    break;
-
-                case ']':
-                    isInBrackets = false;
-
-                    break;
-
-                default:
-
-                    break;
-
-            }
-
-            part += cursor;
-        }
-
-        if (isEscaped) {
-            part += '\\';
-        }
-
-        return parts.concat(part);
-    },
-
-    /**
-     * @public
-     * @memberOf {Parser}
-     * @method
-     *
-     * @param {String} path
-     *
-     * @returns {Array<String>}
-     * */
-    parsePart: function (path) {
-        /*eslint complexity: 0*/
-        var cursor = '';
-        var i;
-        var isEscaped = false;
-        var isInBrackets = false;
-        var isInRoot = true;
-        var l;
-        var part = '';
-        var parts = [];
-        var self = this;
-
         function back() {
-            parts = [];
-            part = path.slice(0, i + 1);
-            part = self.unescape(part);
+            while (parts.length > stableLength) {
+                parts.pop();
+            }
+            token = path.substring(stableIndex, i + 1);
+            token = self.unescape(token);
             isInRoot = true;
         }
 
@@ -154,8 +83,31 @@ var Parser = inherit(/** @lends Parser.prototype */ {
             }
 
             if (isEscaped) {
-                part += cursor;
+                token += cursor;
                 isEscaped = false;
+
+                continue;
+            }
+
+            if (cursor === '.') {
+
+                if (isInBrackets) {
+                    token += cursor;
+
+                    continue;
+                }
+
+                if (parts.length === stableLength || token) {
+                    parts[parts.length] = {
+                        type: 'ROOT',
+                        part: token
+                    };
+                }
+
+                stableIndex = i + 1;
+                stableLength = parts.length;
+                isInRoot = true;
+                token = '';
 
                 continue;
             }
@@ -163,21 +115,21 @@ var Parser = inherit(/** @lends Parser.prototype */ {
             if (cursor === '[') {
 
                 if (isInBrackets) {
-                    part += cursor;
+                    token += cursor;
 
                     continue;
                 }
 
-                if (!parts.length || part) {
-                    parts.push({
+                if (parts.length && parts.length === stableLength || token) {
+                    parts[parts.length] = {
                         type: 'ROOT',
-                        part: part
-                    });
+                        part: token
+                    };
                 }
 
                 isInBrackets = true;
                 isInRoot = false;
-                part = '';
+                token = '';
 
                 continue;
             }
@@ -186,17 +138,17 @@ var Parser = inherit(/** @lends Parser.prototype */ {
 
                 if (isInBrackets) {
                     isInBrackets = false;
-                    parts.push({
+                    parts[parts.length] = {
                         type: 'PART',
-                        part: part
-                    });
-                    part = '';
+                        part: token
+                    };
+                    token = '';
 
                     continue;
                 }
 
                 if (isInRoot) {
-                    part += cursor;
+                    token += cursor;
 
                     continue;
                 }
@@ -207,7 +159,7 @@ var Parser = inherit(/** @lends Parser.prototype */ {
             }
 
             if (isInBrackets || isInRoot) {
-                part += cursor;
+                token += cursor;
 
                 continue;
             }
@@ -220,32 +172,17 @@ var Parser = inherit(/** @lends Parser.prototype */ {
         }
 
         if (isEscaped) {
-            part += '\\';
+            token += '\\';
         }
 
         if (isInRoot) {
-            parts.push({
+            parts[parts.length] = {
                 type: 'ROOT',
-                part: part
-            });
+                part: token
+            };
         }
 
         return parts;
-    },
-
-    /**
-     * @public
-     * @memberOf {Parser}
-     * @method
-     *
-     * @param {String} path
-     *
-     * @returns {Array<String>}
-     * */
-    parsePath: function (path) {
-        var parts = this.splitPath(path);
-
-        return _.reduce(parts, this.__reducePart, [], this);
     },
 
     /**
@@ -260,24 +197,6 @@ var Parser = inherit(/** @lends Parser.prototype */ {
     unescape: function (s) {
 
         return s.replace(/\\([\s\S])/g, '$1');
-    },
-
-    /**
-     * @private
-     * @memberOf {Parser}
-     * @method
-     *
-     * @returns {Array<String>}
-     * */
-    __reducePart: function (parts, part, i) {
-        part = this.parsePart(part);
-
-        //  [a][b][c], skip "" root
-        if (i === 0 && part.length > 1 && !part[0].part) {
-            part = part.slice(1);
-        }
-
-        return parts.concat(part);
     }
 
 });
