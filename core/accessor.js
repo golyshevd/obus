@@ -3,8 +3,8 @@
 var Parser = /** @type Parser */ require('./parser');
 
 var _ = require('lodash-node');
+var getKey = require('./util/get-key');
 var inherit = require('inherit');
-var toIndex = require('./util/to-index');
 
 /**
  * @class Accessor
@@ -95,12 +95,8 @@ var Accessor = inherit(Parser, /** @lends Accessor.prototype */ {
      * @param {*} defaultValue
      * */
     _getByParts: function (root, parts, defaultValue) {
-        /*eslint complexity: 0*/
         var i;
         var l;
-        var k;
-        var part;
-        var type;
 
         for (i = 0, l = parts.length; i < l; i += 1) {
 
@@ -109,35 +105,7 @@ var Accessor = inherit(Parser, /** @lends Accessor.prototype */ {
                 return defaultValue;
             }
 
-            part = parts[i];
-            type = part.type;
-            part = part.part;
-
-            if (type !== 'PART' || !_.isArray(root)) {
-                root = root[part];
-
-                continue;
-            }
-
-            k = toIndex(part);
-
-            if (_.isNaN(k)) {
-                root = root[part];
-
-                continue;
-            }
-
-            if (k < 0) {
-                k = root.length + k;
-            }
-
-            if (k < 0) {
-                root = root[part];
-
-                continue;
-            }
-
-            root = root[k];
+            root = root[getKey(root, parts[i])];
         }
 
         if (this._isFalsy(root)) {
