@@ -1,51 +1,23 @@
 'use strict';
 
-var _ = require('lodash-node');
 var inherit = require('inherit');
 
 /**
  * @class Parser
  * */
-var Parser = inherit(/** @lends Parser.prototype */ {
-
-    /**
-     * @private
-     * @memberOf {Parser}
-     * @method
-     *
-     * @constructs
-     *
-     * @param {Object} [params]
-     * */
-    __constructor: function (params) {
-
-        /**
-         * @public
-         * @memberOf {Parser}
-         * @property
-         * @type {Object}
-         * */
-        this.params = _.extend({}, this.params, params);
-    },
+var Parser = inherit(/** @lends Parser.prototype */ {}, {
 
     /**
      * @public
-     * @memberOf {Parser}
-     * @property
-     * @type {Object}
-     * */
-    params: {},
-
-    /**
-     * @public
-     * @memberOf {Parser}
+     * @static
+     * @memberOf Parser
      * @method
      *
      * @param {String} path
      *
      * @returns {Array<String>}
      * */
-    parsePath: function (path) {
+    parse: function (path) {
         /*eslint complexity: 0*/
         var cursor;
         var i;
@@ -54,7 +26,6 @@ var Parser = inherit(/** @lends Parser.prototype */ {
         var isInRoot = true;
         var l;
         var parts = [];
-        var self = this;
         var stableIndex = 0;
         var stableLength = 0;
         var token = '';
@@ -69,7 +40,7 @@ var Parser = inherit(/** @lends Parser.prototype */ {
                 parts.pop();
             }
             token = path.substring(stableIndex, i + 1);
-            token = self.unescape(token);
+            token = Parser.unescape(token);
             isInRoot = true;
         }
 
@@ -187,7 +158,8 @@ var Parser = inherit(/** @lends Parser.prototype */ {
 
     /**
      * @public
-     * @memberOf {Parser}
+     * @static
+     * @memberOf Parser
      * @method
      *
      * @param {String} s
