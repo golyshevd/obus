@@ -2,6 +2,21 @@
 
 var inherit = require('inherit');
 
+function isSpace(s) {
+
+    return /^\s$/.test(s);
+}
+
+function isTokenEmpty(s) {
+
+    return /^(?:\\?\s)*$/.test(s);
+}
+
+function createToken(s) {
+
+    return s.trimLeft().replace(/\\([\s\S])|\s+$/g, '$1');
+}
+
 /**
  * @class Parser
  * */
@@ -30,7 +45,7 @@ var Parser = inherit(/** @lends Parser.prototype */ {}, {
         var stableLength = 0;
         var token = '';
 
-        if (!path) {
+        if (isTokenEmpty(path)) {
 
             return parts;
         }
@@ -40,8 +55,17 @@ var Parser = inherit(/** @lends Parser.prototype */ {}, {
                 parts.pop();
             }
             token = path.substring(stableIndex, i + 1);
-            token = Parser.unescape(token);
             isInRoot = true;
+        }
+
+        function push(type) {
+            token = createToken(token);
+
+            parts[parts.length] = {
+                type: type,
+                part: token
+            };
+            token = '';
         }
 
         for (i = 0, l = path.length; i < l; i += 1) {
@@ -54,8 +78,17 @@ var Parser = inherit(/** @lends Parser.prototype */ {}, {
             }
 
             if (isEscaped) {
+
+                if (isSpace(cursor)) {
+                    cursor = '\\' + cursor;
+                }
+
                 token += cursor;
                 isEscaped = false;
+
+                if (!isInBrackets && !isInRoot) {
+                    back();
+                }
 
                 continue;
             }
@@ -68,17 +101,13 @@ var Parser = inherit(/** @lends Parser.prototype */ {}, {
                     continue;
                 }
 
-                if (parts.length === stableLength || token) {
-                    parts[parts.length] = {
-                        type: 'ROOT',
-                        part: token
-                    };
+                if (parts.length === stableLength || !isTokenEmpty(token)) {
+                    push('ROOT');
                 }
 
                 stableIndex = i + 1;
                 stableLength = parts.length;
                 isInRoot = true;
-                token = '';
 
                 continue;
             }
@@ -91,16 +120,12 @@ var Parser = inherit(/** @lends Parser.prototype */ {}, {
                     continue;
                 }
 
-                if (parts.length && parts.length === stableLength || token) {
-                    parts[parts.length] = {
-                        type: 'ROOT',
-                        part: token
-                    };
+                if (parts.length && parts.length === stableLength || !isTokenEmpty(token)) {
+                    push('ROOT');
                 }
 
                 isInBrackets = true;
                 isInRoot = false;
-                token = '';
 
                 continue;
             }
@@ -109,11 +134,7 @@ var Parser = inherit(/** @lends Parser.prototype */ {}, {
 
                 if (isInBrackets) {
                     isInBrackets = false;
-                    parts[parts.length] = {
-                        type: 'PART',
-                        part: token
-                    };
-                    token = '';
+                    push('PART');
 
                     continue;
                 }
@@ -135,6 +156,11 @@ var Parser = inherit(/** @lends Parser.prototype */ {}, {
                 continue;
             }
 
+            if (isSpace(cursor)) {
+
+                continue;
+            }
+
             back();
         }
 
@@ -147,28 +173,10 @@ var Parser = inherit(/** @lends Parser.prototype */ {}, {
         }
 
         if (isInRoot) {
-            parts[parts.length] = {
-                type: 'ROOT',
-                part: token
-            };
+            push('ROOT');
         }
 
         return parts;
-    },
-
-    /**
-     * @public
-     * @static
-     * @memberOf Parser
-     * @method
-     *
-     * @param {String} s
-     *
-     * @returns {String}
-     * */
-    unescape: function (s) {
-
-        return s.replace(/\\([\s\S])/g, '$1');
     }
 
 });
