@@ -4,6 +4,7 @@ var Parser = /** @type Parser */ require('./parser');
 
 var _ = require('lodash-node');
 var inherit = require('inherit');
+var toIndex = require('./util/to-index');
 
 /**
  * @class Accessor
@@ -99,6 +100,7 @@ var Accessor = inherit(Parser, /** @lends Accessor.prototype */ {
         var l;
         var k;
         var part;
+        var type;
 
         for (i = 0, l = parts.length; i < l; i += 1) {
 
@@ -108,23 +110,31 @@ var Accessor = inherit(Parser, /** @lends Accessor.prototype */ {
             }
 
             part = parts[i];
+            type = part.type;
+            part = part.part;
 
-            if (part.type !== 'PART' || !_.isArray(root)) {
-                root = root[part.part];
+            if (type !== 'PART' || !_.isArray(root)) {
+                root = root[part];
 
                 continue;
             }
 
-            k = toInt(part.part);
+            k = toIndex(part);
 
             if (_.isNaN(k)) {
-                root = root[part.part];
+                root = root[part];
 
                 continue;
             }
 
             if (k < 0) {
                 k = root.length + k;
+            }
+
+            if (k < 0) {
+                root = root[part];
+
+                continue;
             }
 
             root = root[k];
@@ -154,25 +164,5 @@ var Accessor = inherit(Parser, /** @lends Accessor.prototype */ {
     }
 
 });
-
-function toInt(s) {
-
-    if (!s || s.indexOf('.') > -1) {
-
-        return NaN;
-    }
-
-    if (/^-?0[0-7]+$/.test(s)) {
-
-        return parseInt(s, 8);
-    }
-
-    if (/^-?0x/i.test(s)) {
-
-        return parseInt(s, 16);
-    }
-
-    return Number(s);
-}
 
 module.exports = Accessor;
