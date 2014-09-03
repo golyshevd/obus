@@ -10,6 +10,7 @@ describe('core/accessor', function () {
     var Accessor = require('../core/accessor');
 
     describe('{Accessor}.get', function () {
+        var header = 'new Accessor(%j).get(%j, %j) should return %j';
         var samples = [
             [
                 [
@@ -120,17 +121,82 @@ describe('core/accessor', function () {
                     100500
                 ],
                 42
+            ],
+            [
+                [
+                    {a: [1, {b: 42}]},
+                    'a[-1].b',
+                    100500
+                ],
+                42
             ]
         ];
-        var header = 'new Accessor(%j).get(%j, %j) should return %j';
 
-        _.forEach(samples, function (sample) {
-            var title = util.format(header, sample[0][0], sample[0][1], sample[0][2], sample[1]);
+        _.forEach(samples, function (s) {
+            var title = util.format(header, s[0][0], s[0][1], s[0][2], s[1]);
             it(title, function () {
-                assert.deepEqual(new Accessor(sample[0][0]).get(sample[0][1], sample[0][2]), sample[1]);
+                assert.deepEqual(new Accessor(s[0][0]).get(s[0][1], s[0][2]), s[1]);
             });
         });
 
     });
 
+    describe('{Accessor}.has', function () {
+        var header = 'new Accessor(%j).has(%j) should return %j';
+        var samples = [
+            [
+                {a: 42},
+                'a',
+                true
+            ],
+            [
+                {a: 42},
+                'a.b',
+                false
+            ],
+            [
+                {a: [1, 2]},
+                'a[0]',
+                true
+            ],
+            [
+                {a: [1, 2]},
+                'a[1]',
+                true
+            ],
+            [
+                {a: [1, 2]},
+                'a[-1]',
+                true
+            ],
+            [
+                {a: [1, 2]},
+                'a[-2]',
+                true
+            ],
+            [
+                {a: [1, 2]},
+                'a[3]',
+                false
+            ],
+            [
+                {a: [1, 2]},
+                'a[-3]',
+                false
+            ],
+            [
+                {a: [1, {b: 42}]},
+                'a[-1].b',
+                true
+            ]
+        ];
+
+        _.forEach(samples, function (s) {
+            var title = util.format(header, s[0], s[1], s[2]);
+
+            it(title, function () {
+                assert.strictEqual(new Accessor(s[0]).has(s[1]), s[2]);
+            });
+        });
+    });
 });

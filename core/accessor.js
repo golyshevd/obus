@@ -62,6 +62,20 @@ var Accessor = inherit(Parser, /** @lends Accessor.prototype */ {
     get: function (path, defaultValue) {
 
         return this.__self.get(this.valueOf(), path, defaultValue);
+    },
+
+    /**
+     * @public
+     * @memberOf {Accessor}
+     * @method
+     *
+     * @param {String} path
+     *
+     * @returns {Boolean}
+     * */
+    has: function (path) {
+
+        return this.__self.has(this.valueOf(), path);
     }
 
 }, {
@@ -85,6 +99,23 @@ var Accessor = inherit(Parser, /** @lends Accessor.prototype */ {
     },
 
     /**
+     * @public
+     * @static
+     * @memberOf Accessor
+     * @method
+     *
+     * @param {Object} root
+     * @param {String} path
+     *
+     * @returns {Boolean}
+     * */
+    has: function (root, path) {
+        var parts = this.parse(path);
+
+        return this._hasByParts(root, parts);
+    },
+
+    /**
      * @protected
      * @static
      * @memberOf Accessor
@@ -93,6 +124,8 @@ var Accessor = inherit(Parser, /** @lends Accessor.prototype */ {
      * @param {Object} root
      * @param {Array} parts
      * @param {*} defaultValue
+     *
+     * @returns {*}
      * */
     _getByParts: function (root, parts, defaultValue) {
         var i;
@@ -114,6 +147,37 @@ var Accessor = inherit(Parser, /** @lends Accessor.prototype */ {
         }
 
         return root;
+    },
+
+    /**
+     * @protected
+     * @static
+     * @memberOf Accessor
+     * @method
+     *
+     * @param {Object} root
+     * @param {Array} parts
+     *
+     * @returns {Boolean}
+     * */
+    _hasByParts: function (root, parts) {
+        var i;
+        var k;
+        var l;
+
+        for (i = 0, l = parts.length; i < l; i += 1) {
+            k = getKey(root, parts[i]);
+
+            if (_.has(root, k)) {
+                root = root[k];
+
+                continue;
+            }
+
+            return false;
+        }
+
+        return true;
     },
 
     /**
