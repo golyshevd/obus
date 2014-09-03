@@ -3,8 +3,8 @@
 var Parser = /** @type Parser */ require('./parser');
 
 var _ = require('lodash-node');
+var getKey = require('./util/get-key');
 var inherit = require('inherit');
-var toIndex = require('./util/to-index');
 
 /**
  * @class Accessor
@@ -62,6 +62,20 @@ var Accessor = inherit(Parser, /** @lends Accessor.prototype */ {
     get: function (path, defaultValue) {
 
         return this.__self.get(this.valueOf(), path, defaultValue);
+    },
+
+    /**
+     * @public
+     * @memberOf {Accessor}
+     * @method
+     *
+     * @param {String} path
+     *
+     * @returns {Boolean}
+     * */
+    has: function (path) {
+
+        return this.__self.has(this.valueOf(), path);
     }
 
 }, {
@@ -85,6 +99,23 @@ var Accessor = inherit(Parser, /** @lends Accessor.prototype */ {
     },
 
     /**
+     * @public
+     * @static
+     * @memberOf Accessor
+     * @method
+     *
+     * @param {Object} root
+     * @param {String} path
+     *
+     * @returns {Boolean}
+     * */
+    has: function (root, path) {
+        var parts = this.parse(path);
+
+        return this._hasByParts(root, parts);
+    },
+
+    /**
      * @protected
      * @static
      * @memberOf Accessor
@@ -93,14 +124,12 @@ var Accessor = inherit(Parser, /** @lends Accessor.prototype */ {
      * @param {Object} root
      * @param {Array} parts
      * @param {*} defaultValue
+     *
+     * @returns {*}
      * */
     _getByParts: function (root, parts, defaultValue) {
-        /*eslint complexity: 0*/
         var i;
         var l;
-        var k;
-        var part;
-        var type;
 
         for (i = 0, l = parts.length; i < l; i += 1) {
 
@@ -109,35 +138,7 @@ var Accessor = inherit(Parser, /** @lends Accessor.prototype */ {
                 return defaultValue;
             }
 
-            part = parts[i];
-            type = part.type;
-            part = part.part;
-
-            if (type !== 'PART' || !_.isArray(root)) {
-                root = root[part];
-
-                continue;
-            }
-
-            k = toIndex(part);
-
-            if (_.isNaN(k)) {
-                root = root[part];
-
-                continue;
-            }
-
-            if (k < 0) {
-                k = root.length + k;
-            }
-
-            if (k < 0) {
-                root = root[part];
-
-                continue;
-            }
-
-            root = root[k];
+            root = root[getKey(root, parts[i])];
         }
 
         if (this._isFalsy(root)) {
@@ -146,6 +147,37 @@ var Accessor = inherit(Parser, /** @lends Accessor.prototype */ {
         }
 
         return root;
+    },
+
+    /**
+     * @protected
+     * @static
+     * @memberOf Accessor
+     * @method
+     *
+     * @param {Object} root
+     * @param {Array} parts
+     *
+     * @returns {Boolean}
+     * */
+    _hasByParts: function (root, parts) {
+        var i;
+        var k;
+        var l;
+
+        for (i = 0, l = parts.length; i < l; i += 1) {
+            k = getKey(root, parts[i]);
+
+            if (_.has(root, k)) {
+                root = root[k];
+
+                continue;
+            }
+
+            return false;
+        }
+
+        return true;
     },
 
     /**
