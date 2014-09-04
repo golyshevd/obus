@@ -8,9 +8,8 @@ var inherit = require('inherit');
 
 /**
  * @class Accessor
- * @extends Parser
  * */
-var Accessor = inherit(Parser, /** @lends Accessor.prototype */ {
+var Accessor = inherit(/** @lends Accessor.prototype */ {
 
     /**
      * @private
@@ -19,14 +18,10 @@ var Accessor = inherit(Parser, /** @lends Accessor.prototype */ {
      *
      * @constructs
      *
-     * @param {Object} [root]
+     * @param {Object} root
+     * @param {Object} [params]
      * */
-    __constructor: function (root) {
-        this.__base();
-
-        if (!_.isObject(root)) {
-            root = {};
-        }
+    __constructor: function (root, params) {
 
         /**
          * @private
@@ -35,6 +30,20 @@ var Accessor = inherit(Parser, /** @lends Accessor.prototype */ {
          * @type {Object}
          * */
         this.__root = root;
+
+        /**
+         * @public
+         * @memberOf {Accessor}
+         * @property
+         *
+         * @type {Object}
+         * */
+        this.params = _.extend({}, this.params, params);
+    },
+
+    parse: function (path) {
+
+        return new Parser(path, this.params).parts;
     },
 
     /**
@@ -55,13 +64,14 @@ var Accessor = inherit(Parser, /** @lends Accessor.prototype */ {
      * @method
      *
      * @param {String} path
-     * @param {*} [defaultValue]
+     * @param {*} [def]
      *
      * @returns {*}
      * */
-    get: function (path, defaultValue) {
+    get: function (path, def) {
+        var parts = this.parse(path);
 
-        return this.__self.get(this.valueOf(), path, defaultValue);
+        return this._getByParts(this.__root, parts, def);
     },
 
     /**
@@ -74,45 +84,9 @@ var Accessor = inherit(Parser, /** @lends Accessor.prototype */ {
      * @returns {Boolean}
      * */
     has: function (path) {
-
-        return this.__self.has(this.valueOf(), path);
-    }
-
-}, {
-
-    /**
-     * @public
-     * @static
-     * @memberOf Accessor
-     * @method
-     *
-     * @param {Object} root
-     * @param {String} path
-     * @param {*} [defaultValue]
-     *
-     * @returns {*}
-     * */
-    get: function (root, path, defaultValue) {
         var parts = this.parse(path);
 
-        return this._getByParts(root, parts, defaultValue);
-    },
-
-    /**
-     * @public
-     * @static
-     * @memberOf Accessor
-     * @method
-     *
-     * @param {Object} root
-     * @param {String} path
-     *
-     * @returns {Boolean}
-     * */
-    has: function (root, path) {
-        var parts = this.parse(path);
-
-        return this._hasByParts(root, parts);
+        return this._hasByParts(this.__root, parts);
     },
 
     /**
@@ -123,11 +97,11 @@ var Accessor = inherit(Parser, /** @lends Accessor.prototype */ {
      *
      * @param {Object} root
      * @param {Array} parts
-     * @param {*} defaultValue
+     * @param {*} def
      *
      * @returns {*}
      * */
-    _getByParts: function (root, parts, defaultValue) {
+    _getByParts: function (root, parts, def) {
         var i;
         var l;
 
@@ -135,7 +109,7 @@ var Accessor = inherit(Parser, /** @lends Accessor.prototype */ {
 
             if (!_.isObject(root)) {
 
-                return defaultValue;
+                return def;
             }
 
             root = root[getKey(root, parts[i])];
@@ -143,7 +117,7 @@ var Accessor = inherit(Parser, /** @lends Accessor.prototype */ {
 
         if (this._isFalsy(root)) {
 
-            return defaultValue;
+            return def;
         }
 
         return root;
