@@ -26,11 +26,37 @@ describe('core/parser', function () {
                 []
             ],
             [
+                ' ',
+                []
+            ],
+            [
+                '\\ \\ \\ ',
+                []
+            ],
+            [
                 'a',
                 [
                     {
                         type: 'ROOT',
                         part: 'a'
+                    }
+                ]
+            ],
+            [
+                ' a ',
+                [
+                    {
+                        type: 'ROOT',
+                        part: 'a'
+                    }
+                ]
+            ],
+            [
+                ' \\ a ',
+                [
+                    {
+                        type: 'ROOT',
+                        part: ' a'
                     }
                 ]
             ],
@@ -174,8 +200,8 @@ describe('core/parser', function () {
                 '[a] [b]',
                 [
                     {
-                        type: 'ROOT',
-                        part: '[a] '
+                        type: 'PART',
+                        part: 'a'
                     },
                     {
                         type: 'PART',
@@ -184,11 +210,11 @@ describe('core/parser', function () {
                 ]
             ],
             [
-                '[] []',
+                '[] \t[]',
                 [
                     {
-                        type: 'ROOT',
-                        part: '[] '
+                        type: 'PART',
+                        part: ''
                     },
                     {
                         type: 'PART',
@@ -200,12 +226,12 @@ describe('core/parser', function () {
                 '[ ] [ ]',
                 [
                     {
-                        type: 'ROOT',
-                        part: '[ ] '
+                        type: 'PART',
+                        part: ''
                     },
                     {
                         type: 'PART',
-                        part: ' '
+                        part: ''
                     }
                 ]
             ],
@@ -226,8 +252,8 @@ describe('core/parser', function () {
                 '[] .a',
                 [
                     {
-                        type: 'ROOT',
-                        part: '[] '
+                        type: 'PART',
+                        part: ''
                     },
                     {
                         type: 'ROOT',
@@ -239,8 +265,8 @@ describe('core/parser', function () {
                 ' [] .a',
                 [
                     {
-                        type: 'ROOT',
-                        part: ' [] '
+                        type: 'PART',
+                        part: ''
                     },
                     {
                         type: 'ROOT',
@@ -490,8 +516,8 @@ describe('core/parser', function () {
                 '[a] [b].c.d[e]',
                 [
                     {
-                        type: 'ROOT',
-                        part: '[a] '
+                        type: 'PART',
+                        part: 'a'
                     },
                     {
                         type: 'PART',
@@ -520,7 +546,11 @@ describe('core/parser', function () {
                     },
                     {
                         type: 'ROOT',
-                        part: 'b[c] '
+                        part: 'b'
+                    },
+                    {
+                        type: 'PART',
+                        part: 'c'
                     },
                     {
                         type: 'PART',
@@ -559,7 +589,15 @@ describe('core/parser', function () {
                     },
                     {
                         type: 'ROOT',
-                        part: 'b[c] [d] '
+                        part: 'b'
+                    },
+                    {
+                        type: 'PART',
+                        part: 'c'
+                    },
+                    {
+                        type: 'PART',
+                        part: 'd'
                     },
                     {
                         type: 'ROOT',
@@ -591,6 +629,28 @@ describe('core/parser', function () {
                     {
                         type: 'ROOT',
                         part: 'a[b]]'
+                    }
+                ]
+            ],
+            [
+                '[a]\\ [b]',
+                [
+                    {
+                        type: 'ROOT',
+                        part: '[a] '
+                    },
+                    {
+                        type: 'PART',
+                        part: 'b'
+                    }
+                ]
+            ],
+            [
+                ' a\\ ',
+                [
+                    {
+                        type: 'ROOT',
+                        part: 'a '
                     }
                 ]
             ]
