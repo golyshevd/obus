@@ -10,139 +10,110 @@ describe('core/accessor', function () {
     var Accessor = require('../core/accessor');
 
     describe('{Accessor}.get', function () {
-        var header = 'new Accessor(%j).get(%j, %j) should return %j';
+        var header = 'new Accessor(%j, %j).get(%j, %j) should return %j';
         var samples = [
             [
-                [
-                    {},
-                    'a',
-                    42
-                ],
+                {},
+                'a',
+                42,
                 42
             ],
             [
-                [
-                    {a: 42},
-                    'a',
-                    100500
-                ],
+                {a: 42},
+                'a',
+                100500,
                 42
             ],
             [
-                [
-                    {a: {b: 42}},
-                    'a.b',
-                    100500
-                ],
+                {a: {b: 42}},
+                'a.b',
+                100500,
                 42
             ],
             [
-                [
-                    {a: {b: 42}},
-                    'a[b]',
-                    100500
-                ],
+                {a: {b: 42}},
+                'a[b]',
+                100500,
                 42
             ],
             [
-                [
-                    null,
-                    'a',
-                    100500
-                ],
+                null,
+                'a',
+                100500,
                 100500
             ],
             [
-                [
-                    {a: 42},
-                    'a.b',
-                    100500
-                ],
+                {a: 42},
+                'a.b',
+                100500,
                 100500
             ],
             [
-                [
-                    {a: [1, 2]},
-                    'a[0]',
-                    100500
-                ],
+                {a: [1, 2]},
+                'a[0]',
+                100500,
                 1
             ],
             [
-                [
-                    {a: [1, 2]},
-                    'a[]',
-                    100500
-                ],
+                {a: [1, 2]},
+                'a[]',
+                100500,
                 100500
             ],
             [
-                [
-                    {a: [1, 2]},
-                    'a[-1]',
-                    100500
-                ],
+                {a: [1, 2]},
+                'a[-1]',
+                100500,
                 2
             ],
             [
-                [
-                    {a: [1, 2]},
-                    'a.-1',
-                    100500
-                ],
+                {a: [1, 2]},
+                'a.-1',
+                100500,
                 100500
             ],
             [
-                [
-                    [1, 2],
-                    '[-1]',
-                    100500
-                ],
+                [1, 2],
+                '[-1]',
+                100500,
                 2
             ],
             [
-                [
-                    [1, 2],
-                    '[-2]',
-                    100500
-                ],
+                [1, 2],
+                '[-2]',
+                100500,
                 1
             ],
             [
-                [
-                    (function () {
-                        var a = [1, 2];
+                (function () {
+                    var a = [1, 2];
 
-                        a['-3'] = 42;
+                    a['-3'] = 42;
 
-                        return a;
-                    }()),
-                    '[-3]',
-                    100500
-                ],
+                    return a;
+                }()),
+                '[-3]',
+                100500,
                 42
             ],
             [
-                [
-                    {a: [1, {b: 42}]},
-                    'a[-1].b',
-                    100500
-                ],
+                {a: [1, {b: 42}]},
+                'a[-1].b',
+                100500,
                 42
             ]
         ];
 
         _.forEach(samples, function (s) {
-            var title = util.format(header, s[0][0], s[0][1], s[0][2], s[1]);
+            var title = util.format(header, s[0], s[4], s[1], s[2], s[3]);
             it(title, function () {
-                assert.deepEqual(new Accessor(s[0][0]).get(s[0][1], s[0][2]), s[1]);
+                assert.deepEqual(new Accessor(s[0], s[4]).get(s[1], s[2]), s[3]);
             });
         });
-
     });
 
     describe('{Accessor}.has', function () {
-        var header = 'new Accessor(%j).has(%j) should return %j';
+        var header = 'new Accessor(%j, %j).has(%j) should return %j';
         var samples = [
             [
                 {a: 42},
@@ -192,11 +163,12 @@ describe('core/accessor', function () {
         ];
 
         _.forEach(samples, function (s) {
-            var title = util.format(header, s[0], s[1], s[2]);
+            var title = util.format(header, s[0], s[3], s[1], s[2]);
 
             it(title, function () {
-                assert.strictEqual(new Accessor(s[0]).has(s[1]), s[2]);
+                assert.strictEqual(new Accessor(s[0], s[3]).has(s[1]), s[2]);
             });
         });
     });
+
 });

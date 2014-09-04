@@ -10,15 +10,7 @@ describe('core/parser', function () {
     var Parser = require('../core/parser');
 
     describe('Parser', function () {
-        it('Should be an instance of Parser', function () {
-            var parser = new Parser();
-
-            assert.instanceOf(parser, Parser);
-        });
-    });
-
-    describe('Parser.parse', function () {
-        var header = 'Should parse "%s" to %j';
+        var header = 'Should parse "%s" to %j (params=%j)';
 
         var samples = [
             [
@@ -776,13 +768,13 @@ describe('core/parser', function () {
             ]
         ];
 
-        _.forEach(samples, function (sample) {
-            var title = util.format(header, sample[0], sample[1]);
+        _.forEach(samples, function (s) {
+            var title = util.format(header, s[0], s[1], s[2]);
 
             it(title, function () {
-                var parts = Parser.parse(sample[0]);
+                var parser = new Parser(s[0], s[2]);
 
-                assert.deepEqual(parts, sample[1]);
+                assert.deepEqual(parser.parts, s[1]);
             });
         });
     });
