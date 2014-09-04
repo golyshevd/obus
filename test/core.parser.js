@@ -31,7 +31,12 @@ describe('core/parser', function () {
             ],
             [
                 '\\ \\ \\ ',
-                []
+                [
+                    {
+                        type: 'ROOT',
+                        part: '   '
+                    }
+                ]
             ],
             [
                 'a',
@@ -633,6 +638,15 @@ describe('core/parser', function () {
                 ]
             ],
             [
+                ' a\\ ',
+                [
+                    {
+                        type: 'ROOT',
+                        part: 'a '
+                    }
+                ]
+            ],
+            [
                 '[a]\\ [b]',
                 [
                     {
@@ -646,11 +660,117 @@ describe('core/parser', function () {
                 ]
             ],
             [
-                ' a\\ ',
+                '[a]\\  [b]',
                 [
                     {
                         type: 'ROOT',
-                        part: 'a '
+                        part: '[a] '
+                    },
+                    {
+                        type: 'PART',
+                        part: 'b'
+                    }
+                ]
+            ],
+            [
+                '[a]\\  \\ [b]',
+                [
+                    {
+                        type: 'ROOT',
+                        part: '[a]   '
+                    },
+                    {
+                        type: 'PART',
+                        part: 'b'
+                    }
+                ]
+            ],
+            [
+                '[a]x[b]',
+                [
+                    {
+                        type: 'ROOT',
+                        part: '[a]x'
+                    },
+                    {
+                        type: 'PART',
+                        part: 'b'
+                    }
+                ]
+            ],
+            [
+                '[a]xx[b]',
+                [
+                    {
+                        type: 'ROOT',
+                        part: '[a]xx'
+                    },
+                    {
+                        type: 'PART',
+                        part: 'b'
+                    }
+                ]
+            ],
+            [
+                '[a]x',
+                [
+                    {
+                        type: 'ROOT',
+                        part: '[a]x'
+                    }
+                ]
+            ],
+            [
+                ' [a] ',
+                [
+                    {
+                        type: 'PART',
+                        part: 'a'
+                    }
+                ]
+            ],
+            [
+                ' [a] \\ ',
+                [
+                    {
+                        type: 'ROOT',
+                        part: '[a]  '
+                    }
+                ]
+            ],
+            [
+                ' a  \\  ',
+                [
+                    {
+                        type: 'ROOT',
+                        part: 'a   '
+                    }
+                ]
+            ],
+            [
+                ' a  \\ ',
+                [
+                    {
+                        type: 'ROOT',
+                        part: 'a   '
+                    }
+                ]
+            ],
+            [
+                '[a]  b ',
+                [
+                    {
+                        type: 'ROOT',
+                        part: '[a]  b'
+                    }
+                ]
+            ],
+            [
+                '[a]\\ ',
+                [
+                    {
+                        type: 'ROOT',
+                        part: '[a] '
                     }
                 ]
             ]

@@ -2,21 +2,6 @@
 
 var inherit = require('inherit');
 
-function isSpace(s) {
-
-    return /^\s$/.test(s);
-}
-
-function isTokenEmpty(s) {
-
-    return /^(?:\\?\s)*$/.test(s);
-}
-
-function createToken(s) {
-
-    return s.trimLeft().replace(/\\([\s\S])|\s+$/g, '$1');
-}
-
 /**
  * @class Parser
  * */
@@ -40,55 +25,52 @@ var Parser = inherit(/** @lends Parser.prototype */ {}, {
         var isInBrackets = false;
         var isInRoot = true;
         var l;
+        var part = '';
         var parts = [];
         var stableIndex = 0;
         var stableLength = 0;
-        var token = '';
 
-        if (isTokenEmpty(path)) {
-
-            return parts;
-        }
-
-        function back() {
+        function back(currentIndex) {
             while (parts.length > stableLength) {
                 parts.pop();
             }
-            token = path.substring(stableIndex, i + 1);
+            part = path.substring(stableIndex, currentIndex + 1);
             isInRoot = true;
+            isInBrackets = false;
         }
 
         function push(type) {
-            token = createToken(token);
-
+            part = token(part);
             parts[parts.length] = {
                 type: type,
-                part: token
+                part: part
             };
-            token = '';
+            part = '';
+        }
+
+        function openPart() {
+            if (!isInRoot && isNotSpace(part)) {
+                back(i - 1);
+            }
+
+            if (isInRoot && parts.length || isNotSpace(part)) {
+                push('ROOT');
+            }
         }
 
         for (i = 0, l = path.length; i < l; i += 1) {
             cursor = path.charAt(i);
 
             if (cursor === '\\' && !isEscaped) {
+                part += cursor;
                 isEscaped = true;
 
                 continue;
             }
 
             if (isEscaped) {
-
-                if (isSpace(cursor)) {
-                    cursor = '\\' + cursor;
-                }
-
-                token += cursor;
+                part += cursor;
                 isEscaped = false;
-
-                if (!isInBrackets && !isInRoot) {
-                    back();
-                }
 
                 continue;
             }
@@ -96,18 +78,18 @@ var Parser = inherit(/** @lends Parser.prototype */ {}, {
             if (cursor === '.') {
 
                 if (isInBrackets) {
-                    token += cursor;
+                    part += cursor;
 
                     continue;
                 }
 
-                if (parts.length === stableLength || !isTokenEmpty(token)) {
+                if (parts.length === stableLength || isNotSpace(part)) {
                     push('ROOT');
                 }
 
+                isInRoot = true;
                 stableIndex = i + 1;
                 stableLength = parts.length;
-                isInRoot = true;
 
                 continue;
             }
@@ -115,14 +97,12 @@ var Parser = inherit(/** @lends Parser.prototype */ {}, {
             if (cursor === '[') {
 
                 if (isInBrackets) {
-                    token += cursor;
+                    part += cursor;
 
                     continue;
                 }
 
-                if (parts.length && parts.length === stableLength || !isTokenEmpty(token)) {
-                    push('ROOT');
-                }
+                openPart();
 
                 isInBrackets = true;
                 isInRoot = false;
@@ -140,45 +120,51 @@ var Parser = inherit(/** @lends Parser.prototype */ {}, {
                 }
 
                 if (isInRoot) {
-                    token += cursor;
+                    part += cursor;
 
                     continue;
                 }
 
-                back();
+                back(i);
 
                 continue;
             }
 
             if (isInBrackets || isInRoot) {
-                token += cursor;
+                part += cursor;
 
                 continue;
             }
 
-            if (isSpace(cursor)) {
-
-                continue;
+            if (isNotSpace(cursor)) {
+                back(i);
             }
 
-            back();
         }
 
         if (isInBrackets) {
-            back();
+            back(i);
         }
 
         if (isEscaped) {
-            token += '\\';
+            part += '\\';
         }
 
-        if (isInRoot) {
-            push('ROOT');
-        }
+        openPart();
 
         return parts;
     }
 
 });
+
+function isNotSpace(s) {
+
+    return s && /\S/.test(s);
+}
+
+function token(s) {
+
+    return s.trimLeft().replace(/\\([\s\S])|\s+$/g, '$1');
+}
 
 module.exports = Parser;
