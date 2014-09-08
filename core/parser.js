@@ -2,6 +2,7 @@
 
 var _ = require('lodash-node');
 var inherit = require('inherit');
+var toIndex = require('./util/to-index');
 
 /**
  * @class Parser
@@ -79,14 +80,30 @@ var Parser = inherit(/** @lends Parser.prototype */ {
      * @private
      * @memberOf {Parser}
      * @method
-     *
-     * @param {String} type
      * */
-    __acceptPart: function (type) {
+    __acceptPart: function () {
+        var part = this.__tokenize(this.__part);
+        // don't try convert escaped characters to indexes
+        var index = /\\/.test(this.__part) ? NaN : toIndex(part);
+
+        this.parts.push({
+            type: 'PART',
+            part: part,
+            index: index
+        });
+        this.__part = '';
+    },
+
+    /**
+     * @private
+     * @memberOf {Parser}
+     * @method
+     * */
+    __acceptRoot: function () {
         var part = this.__tokenize(this.__part);
 
         this.parts.push({
-            type: type,
+            type: 'ROOT',
             part: part
         });
         this.__part = '';
@@ -222,7 +239,7 @@ var Parser = inherit(/** @lends Parser.prototype */ {
         }
 
         if (this.parts.length === this.__stableLength || this.__isNotASpace(this.__part)) {
-            this.__acceptPart('ROOT');
+            this.__acceptRoot();
         }
 
         this.__isInRoot = true;
@@ -267,7 +284,7 @@ var Parser = inherit(/** @lends Parser.prototype */ {
 
         if (this.__isInBrackets) {
             this.__isInBrackets = false;
-            this.__acceptPart('PART');
+            this.__acceptPart();
 
             return true;
         }
@@ -313,7 +330,7 @@ var Parser = inherit(/** @lends Parser.prototype */ {
         }
 
         if (this.__isInRoot && this.parts.length || this.__isNotASpace(this.__part)) {
-            this.__acceptPart('ROOT');
+            this.__acceptRoot();
         }
     },
 

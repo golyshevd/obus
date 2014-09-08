@@ -1,7 +1,6 @@
 'use strict';
 
 var _ = require('lodash-node');
-var toIndex = require('./to-index');
 
 function getKey(root, part) {
     var type = part.type;
@@ -12,7 +11,7 @@ function getKey(root, part) {
         return k;
     }
 
-    k = toIndex(k);
+    k = part.index;
 
     if (_.isNaN(k)) {
 

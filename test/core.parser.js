@@ -113,6 +113,7 @@ describe('core/parser', function () {
                     },
                     {
                         type: 'PART',
+                        index: NaN,
                         part: 'b'
                     }
                 ]
@@ -122,6 +123,7 @@ describe('core/parser', function () {
                 [
                     {
                         type: 'PART',
+                        index: NaN,
                         part: 'a'
                     },
                     {
@@ -143,6 +145,7 @@ describe('core/parser', function () {
                     },
                     {
                         type: 'PART',
+                        index: NaN,
                         part: 'c'
                     },
                     {
@@ -164,6 +167,7 @@ describe('core/parser', function () {
                     },
                     {
                         type: 'PART',
+                        index: NaN,
                         part: 'c.d'
                     },
                     {
@@ -185,6 +189,7 @@ describe('core/parser', function () {
                     },
                     {
                         type: 'PART',
+                        index: NaN,
                         part: 'c['
                     },
                     {
@@ -198,10 +203,12 @@ describe('core/parser', function () {
                 [
                     {
                         type: 'PART',
+                        index: NaN,
                         part: 'a'
                     },
                     {
                         type: 'PART',
+                        index: NaN,
                         part: 'b'
                     }
                 ]
@@ -211,10 +218,12 @@ describe('core/parser', function () {
                 [
                     {
                         type: 'PART',
+                        index: NaN,
                         part: ''
                     },
                     {
                         type: 'PART',
+                        index: NaN,
                         part: ''
                     }
                 ]
@@ -224,10 +233,12 @@ describe('core/parser', function () {
                 [
                     {
                         type: 'PART',
+                        index: NaN,
                         part: ''
                     },
                     {
                         type: 'PART',
+                        index: NaN,
                         part: ''
                     }
                 ]
@@ -237,7 +248,8 @@ describe('core/parser', function () {
                 [
                     {
                         type: 'PART',
-                        part: ''
+                        part: '',
+                        index: NaN
                     },
                     {
                         type: 'ROOT',
@@ -250,7 +262,8 @@ describe('core/parser', function () {
                 [
                     {
                         type: 'PART',
-                        part: ''
+                        part: '',
+                        index: NaN
                     },
                     {
                         type: 'ROOT',
@@ -263,7 +276,8 @@ describe('core/parser', function () {
                 [
                     {
                         type: 'PART',
-                        part: ''
+                        part: '',
+                        index: NaN
                     },
                     {
                         type: 'ROOT',
@@ -297,7 +311,8 @@ describe('core/parser', function () {
                 [
                     {
                         type: 'PART',
-                        part: 'a'
+                        part: 'a',
+                        index: NaN
                     },
                     {
                         type: 'ROOT',
@@ -309,7 +324,8 @@ describe('core/parser', function () {
                     },
                     {
                         type: 'PART',
-                        part: 'c'
+                        part: 'c',
+                        index: NaN
                     }
                 ]
             ],
@@ -318,7 +334,8 @@ describe('core/parser', function () {
                 [
                     {
                         type: 'PART',
-                        part: 'a'
+                        part: 'a',
+                        index: NaN
                     },
                     {
                         type: 'ROOT',
@@ -330,7 +347,8 @@ describe('core/parser', function () {
                     },
                     {
                         type: 'PART',
-                        part: 'd'
+                        part: 'd',
+                        index: NaN
                     },
                     {
                         type: 'ROOT',
@@ -338,7 +356,8 @@ describe('core/parser', function () {
                     },
                     {
                         type: 'PART',
-                        part: 'f'
+                        part: 'f',
+                        index: NaN
                     }
                 ]
             ],
@@ -355,7 +374,8 @@ describe('core/parser', function () {
                     },
                     {
                         type: 'PART',
-                        part: 'b'
+                        part: 'b',
+                        index: NaN
                     }
                 ]
             ],
@@ -395,7 +415,8 @@ describe('core/parser', function () {
                     },
                     {
                         type: 'PART',
-                        part: 'c'
+                        part: 'c',
+                        index: NaN
                     }
                 ]
             ],
@@ -413,7 +434,8 @@ describe('core/parser', function () {
                 [
                     {
                         type: 'PART',
-                        part: 'a'
+                        part: 'a',
+                        index: NaN
                     },
                     {
                         type: 'ROOT',
@@ -426,7 +448,8 @@ describe('core/parser', function () {
                 [
                     {
                         type: 'PART',
-                        part: ''
+                        part: '',
+                        index: NaN
                     },
                     {
                         type: 'ROOT',
@@ -514,11 +537,13 @@ describe('core/parser', function () {
                 [
                     {
                         type: 'PART',
-                        part: 'a'
+                        part: 'a',
+                        index: NaN
                     },
                     {
                         type: 'PART',
-                        part: 'b'
+                        part: 'b',
+                        index: NaN
                     },
                     {
                         type: 'ROOT',
@@ -530,7 +555,8 @@ describe('core/parser', function () {
                     },
                     {
                         type: 'PART',
-                        part: 'e'
+                        part: 'e',
+                        index: NaN
                     }
                 ]
             ],
@@ -547,11 +573,13 @@ describe('core/parser', function () {
                     },
                     {
                         type: 'PART',
-                        part: 'c'
+                        part: 'c',
+                        index: NaN
                     },
                     {
                         type: 'PART',
-                        part: 'd'
+                        part: 'd',
+                        index: NaN
                     }
                 ]
             ],
@@ -582,7 +610,8 @@ describe('core/parser', function () {
                 [
                     {
                         type: 'PART',
-                        part: 'a'
+                        part: 'a',
+                        index: NaN
                     },
                     {
                         type: 'ROOT',
@@ -590,11 +619,13 @@ describe('core/parser', function () {
                     },
                     {
                         type: 'PART',
-                        part: 'c'
+                        part: 'c',
+                        index: NaN
                     },
                     {
                         type: 'PART',
-                        part: 'd'
+                        part: 'd',
+                        index: NaN
                     },
                     {
                         type: 'ROOT',
@@ -607,7 +638,8 @@ describe('core/parser', function () {
                 [
                     {
                         type: 'PART',
-                        part: 'a.b'
+                        part: 'a.b',
+                        index: NaN
                     }
                 ]
             ],
@@ -647,7 +679,8 @@ describe('core/parser', function () {
                     },
                     {
                         type: 'PART',
-                        part: 'b'
+                        part: 'b',
+                        index: NaN
                     }
                 ]
             ],
@@ -660,7 +693,8 @@ describe('core/parser', function () {
                     },
                     {
                         type: 'PART',
-                        part: 'b'
+                        part: 'b',
+                        index: NaN
                     }
                 ]
             ],
@@ -673,7 +707,8 @@ describe('core/parser', function () {
                     },
                     {
                         type: 'PART',
-                        part: 'b'
+                        part: 'b',
+                        index: NaN
                     }
                 ]
             ],
@@ -686,7 +721,8 @@ describe('core/parser', function () {
                     },
                     {
                         type: 'PART',
-                        part: 'b'
+                        part: 'b',
+                        index: NaN
                     }
                 ]
             ],
@@ -699,7 +735,8 @@ describe('core/parser', function () {
                     },
                     {
                         type: 'PART',
-                        part: 'b'
+                        part: 'b',
+                        index: NaN
                     }
                 ]
             ],
@@ -717,7 +754,8 @@ describe('core/parser', function () {
                 [
                     {
                         type: 'PART',
-                        part: 'a'
+                        part: 'a',
+                        index: NaN
                     }
                 ]
             ],
@@ -775,7 +813,8 @@ describe('core/parser', function () {
                     },
                     {
                         type: 'PART',
-                        part: 'd'
+                        part: 'd',
+                        index: NaN
                     }
                 ]
             ],
@@ -788,7 +827,8 @@ describe('core/parser', function () {
                     },
                     {
                         type: 'PART',
-                        part: 'b'
+                        part: 'b',
+                        index: NaN
                     }
                 ]
             ],
@@ -801,7 +841,8 @@ describe('core/parser', function () {
                     },
                     {
                         type: 'PART',
-                        part: ' b'
+                        part: ' b',
+                        index: NaN
                     }
                 ]
             ],
@@ -847,7 +888,8 @@ describe('core/parser', function () {
                     },
                     {
                         type: 'PART',
-                        part: ' b '
+                        part: ' b ',
+                        index: NaN
                     }
                 ],
                 {
@@ -863,7 +905,8 @@ describe('core/parser', function () {
                     },
                     {
                         type: 'PART',
-                        part: ' b '
+                        part: ' b ',
+                        index: NaN
                     }
                 ],
                 {
@@ -891,11 +934,13 @@ describe('core/parser', function () {
                     },
                     {
                         type: 'PART',
-                        part: ' b '
+                        part: ' b ',
+                        index: NaN
                     },
                     {
                         type: 'PART',
-                        part: ' c '
+                        part: ' c ',
+                        index: NaN
                     }
                 ],
                 {
@@ -911,7 +956,8 @@ describe('core/parser', function () {
                     },
                     {
                         type: 'PART',
-                        part: ' c '
+                        part: ' c ',
+                        index: NaN
                     }
                 ],
                 {
@@ -955,7 +1001,8 @@ describe('core/parser', function () {
                     },
                     {
                         type: 'PART',
-                        part: ' b '
+                        part: ' b ',
+                        index: NaN
                     },
                     {
                         type: 'ROOT',
@@ -965,6 +1012,34 @@ describe('core/parser', function () {
                 {
                     strictSpaces: true
                 }
+            ],
+            [
+                'a[1]',
+                [
+                    {
+                        type: 'ROOT',
+                        part: 'a'
+                    },
+                    {
+                        type: 'PART',
+                        part: '1',
+                        index: 1
+                    }
+                ]
+            ],
+            [
+                'a[\\1]',
+                [
+                    {
+                        type: 'ROOT',
+                        part: 'a'
+                    },
+                    {
+                        type: 'PART',
+                        part: '1',
+                        index: NaN
+                    }
+                ]
             ]
         ];
 
