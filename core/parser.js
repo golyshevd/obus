@@ -294,6 +294,11 @@ var Parser = inherit(/** @lends Parser.prototype */ {
      * */
     __isNotASpace: function (s) {
 
+        if (this.params.strictSpaces) {
+
+            return Boolean(s);
+        }
+
         return s && /\S/.test(s);
     },
 
@@ -340,6 +345,11 @@ var Parser = inherit(/** @lends Parser.prototype */ {
      * @returns {String}
      * */
     __tokenize: function (s) {
+
+        if (this.params.strictSpaces) {
+
+            return s.replace(/\\([\s\S])/g, '$1');
+        }
 
         return s.trimLeft().replace(/\\([\s\S])|\s+$/g, '$1');
     }

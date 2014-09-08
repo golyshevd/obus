@@ -765,15 +765,214 @@ describe('core/parser', function () {
                         part: '[a] '
                     }
                 ]
+            ],
+            [
+                'a[b] c [d]',
+                [
+                    {
+                        type: 'ROOT',
+                        part: 'a[b] c'
+                    },
+                    {
+                        type: 'PART',
+                        part: 'd'
+                    }
+                ]
+            ],
+            [
+                'a[ b ]',
+                [
+                    {
+                        type: 'ROOT',
+                        part: 'a'
+                    },
+                    {
+                        type: 'PART',
+                        part: 'b'
+                    }
+                ]
+            ],
+            [
+                'a[\\ b ]',
+                [
+                    {
+                        type: 'ROOT',
+                        part: 'a'
+                    },
+                    {
+                        type: 'PART',
+                        part: ' b'
+                    }
+                ]
+            ],
+            //  STRICT SPACES
+            [
+                ' a . b ',
+                [
+                    {
+                        type: 'ROOT',
+                        part: ' a '
+                    },
+                    {
+                        type: 'ROOT',
+                        part: ' b '
+                    }
+                ],
+                {
+                    strictSpaces: true
+                }
+            ],
+            [
+                '\\ a\\ .\\ b ',
+                [
+                    {
+                        type: 'ROOT',
+                        part: ' a '
+                    },
+                    {
+                        type: 'ROOT',
+                        part: ' b '
+                    }
+                ],
+                {
+                    strictSpaces: true
+                }
+            ],
+            [
+                'a[ b ]',
+                [
+                    {
+                        type: 'ROOT',
+                        part: 'a'
+                    },
+                    {
+                        type: 'PART',
+                        part: ' b '
+                    }
+                ],
+                {
+                    strictSpaces: true
+                }
+            ],
+            [
+                ' a [ b ]',
+                [
+                    {
+                        type: 'ROOT',
+                        part: ' a '
+                    },
+                    {
+                        type: 'PART',
+                        part: ' b '
+                    }
+                ],
+                {
+                    strictSpaces: true
+                }
+            ],
+            [
+                ' a [ b ] ',
+                [
+                    {
+                        type: 'ROOT',
+                        part: ' a [ b ] '
+                    }
+                ],
+                {
+                    strictSpaces: true
+                }
+            ],
+            [
+                ' a [ b ][ c ]',
+                [
+                    {
+                        type: 'ROOT',
+                        part: ' a '
+                    },
+                    {
+                        type: 'PART',
+                        part: ' b '
+                    },
+                    {
+                        type: 'PART',
+                        part: ' c '
+                    }
+                ],
+                {
+                    strictSpaces: true
+                }
+            ],
+            [
+                ' a [ b ] [ c ]',
+                [
+                    {
+                        type: 'ROOT',
+                        part: ' a [ b ] '
+                    },
+                    {
+                        type: 'PART',
+                        part: ' c '
+                    }
+                ],
+                {
+                    strictSpaces: true
+                }
+            ],
+            [
+                ' a [ b ] [ c ] ',
+                [
+                    {
+                        type: 'ROOT',
+                        part: ' a [ b ] [ c ] '
+                    }
+                ],
+                {
+                    strictSpaces: true
+                }
+            ],
+            [
+                ' a [ b ] .c',
+                [
+                    {
+                        type: 'ROOT',
+                        part: ' a [ b ] '
+                    },
+                    {
+                        type: 'ROOT',
+                        part: 'c'
+                    }
+                ],
+                {
+                    strictSpaces: true
+                }
+            ],
+            [
+                ' a [ b ].c',
+                [
+                    {
+                        type: 'ROOT',
+                        part: ' a '
+                    },
+                    {
+                        type: 'PART',
+                        part: ' b '
+                    },
+                    {
+                        type: 'ROOT',
+                        part: 'c'
+                    }
+                ],
+                {
+                    strictSpaces: true
+                }
             ]
         ];
 
         _.forEach(samples, function (s) {
-            var title = util.format(header, s[0], s[1], s[2]);
+            var parser = new Parser(s[0], s[2]);
+            var title = util.format(header, s[0], s[1], parser.params);
 
             it(title, function () {
-                var parser = new Parser(s[0], s[2]);
-
                 assert.deepEqual(parser.parts, s[1]);
             });
         });
