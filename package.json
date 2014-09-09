@@ -23,7 +23,7 @@
         "chai": "1.9.1"
     },
     "license": "MIT",
-    "main": "lib/obus",
+    "main": "core/obus",
     "name": "obus",
     "repository": {
         "type": "git",
