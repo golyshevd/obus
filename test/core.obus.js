@@ -12,23 +12,9 @@ describe('core/parser', function () {
     describe('{Obus}.parse', function () {
 
         var samples = [
-            [
-                'a.b',
-                [
-                    'a',
-                    'b'
-                ]
-            ],
-            [
-                '',
-                []
-            ],
-            [
-                'a\\.b',
-                [
-                    'a.b'
-                ]
-            ]
+            ['a.b', ['a', 'b']],
+            ['', []],
+            ['a\\.b', ['a.b']]
         ];
 
         var header = 'new Obus(%j).parse(%j) should return %j';
@@ -120,67 +106,30 @@ describe('core/parser', function () {
                 {},
                 'a.b',
                 42,
-                false,
-                {
-                    a: {
-                        b: 42
-                    }
-                }
+                {a: {b: 42}}
             ],
             [
                 {a: 42},
                 'a.b',
                 42,
-                false,
-                {
-                    a: {
-                        b: 42
-                    }
-                }
+                {a: {b: 42}}
             ],
             [
                 {a: {}},
                 'a.b',
                 42,
-                false,
-                {
-                    a: {
-                        b: 42
-                    }
-                }
-            ],
-            [
-                {a: {b: 42}},
-                'a.b',
-                43,
-                true,
-                {
-                    a: {
-                        b: [42, 43]
-                    }
-                }
-            ],
-            [
-                {a: {b: [42, 43]}},
-                'a.b',
-                44,
-                true,
-                {
-                    a: {
-                        b: [42, 43, 44]
-                    }
-                }
+                {a: {b: 42}}
             ]
         ];
 
-        var header = 'new Obus(%j).set(%j, %j, %j).valueOf() should return %j';
+        var header = 'new Obus(%j).set(%j, %j).valueOf() should return %j';
 
         _.forEach(samples, function (s) {
-            var title = util.format(header, s[0], s[1], s[2], s[3], s[4]);
+            var title = util.format(header, s[0], s[1], s[2], s[3]);
             var obus = new Obus(s[0]);
 
             it(title, function () {
-                assert.deepEqual(obus.set(s[1], s[2], s[3]).valueOf(), s[4]);
+                assert.deepEqual(obus.set(s[1], s[2]).valueOf(), s[3]);
             });
         });
     });
@@ -191,22 +140,55 @@ describe('core/parser', function () {
                 {a: 42},
                 'a',
                 43,
-                {
-                    a: [42, 43]
-                }
+                {a: [42, 43]}
             ],
             [
                 {a: {b: 42}},
                 'a',
-                {
-                    c: 43
-                },
-                {
-                    a: {
-                        b: 42,
-                        c: 43
-                    }
-                }
+                {c: 43},
+                {a: {b: 42, c: 43}}
+            ],
+            [
+                {a: {b: 42}},
+                'a.b',
+                43,
+                {a: {b: [42, 43]}}
+            ],
+            [
+                {},
+                'a.b',
+                42,
+                {a: {b: 42}}
+            ],
+            [
+                {a: {b: 42}},
+                'a',
+                {c: 43},
+                {a: {b: 42, c: 43}}
+            ],
+            [
+                {a: {b: 42}},
+                'a',
+                {b: 43},
+                {a: {b: [42, 43]}}
+            ],
+            [
+                {a: {b: [1, 2]}},
+                'a.b',
+                3,
+                {a: {b: [1, 2, 3]}}
+            ],
+            [
+                {a: {b: {}}},
+                'a.b',
+                42,
+                {a: {b: {}}}
+            ],
+            [
+                {a: {b: 42}},
+                'a.b',
+                {c: 42},
+                {a: {b: {c: 42}}}
             ]
         ];
 
@@ -218,6 +200,37 @@ describe('core/parser', function () {
 
             it(title, function () {
                 assert.deepEqual(obus.add(s[1], s[2]).valueOf(), s[3]);
+            });
+        });
+    });
+
+    describe('{Obus}.del', function () {
+        var samples = [
+            [
+                {a: {b: 42}},
+                'a.b',
+                true
+            ],
+            [
+                {a: {b: 42}},
+                'a.b.c',
+                false
+            ],
+            [
+                {},
+                'a.b.c',
+                false
+            ]
+        ];
+
+        var header = 'new Obus(%j).del(%j) should return %j';
+
+        _.forEach(samples, function (s) {
+            var title = util.format(header, s[0], s[1], s[2]);
+            var obus = new Obus(s[0]);
+
+            it(title, function () {
+                assert.deepEqual(obus.del(s[1]), s[2]);
             });
         });
     });
