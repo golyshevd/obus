@@ -9,7 +9,7 @@ describe('core/parser', function () {
     /*eslint max-nested-callbacks: 0*/
     var Obus = require('../core/obus');
 
-    describe('{Obus}.parse', function () {
+    describe('Obus.parse', function () {
 
         var samples = [
             ['a.b', ['a', 'b']],
@@ -17,14 +17,41 @@ describe('core/parser', function () {
             ['a\\.b', ['a.b']]
         ];
 
-        var header = 'new Obus(%j).parse(%j) should return %j';
+        var header = 'Obus.parse(%j) should return %j';
 
         _.forEach(samples, function (s) {
             var title = util.format(header, null, s[0], s[1]);
-            var obus = new Obus();
 
             it(title, function () {
-                assert.deepEqual(obus.parse(s[0]), s[1]);
+                assert.deepEqual(Obus.parse(s[0]), s[1]);
+            });
+        });
+    });
+
+    describe('Obus.escape', function () {
+
+        var samples = [
+            [
+                'a',
+                'a'
+            ],
+            [
+                'a.b',
+                'a\\.b'
+            ],
+            [
+                '\\ ',
+                '\\\\ '
+            ]
+        ];
+
+        var header = 'Obus.escape(%j) should return %j';
+
+        _.forEach(samples, function (s) {
+            var title = util.format(header, null, s[0], s[1]);
+
+            it(title, function () {
+                assert.deepEqual(Obus.escape(s[0]), s[1]);
             });
         });
     });
