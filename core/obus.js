@@ -39,7 +39,7 @@ var Obus = inherit(/** @lends Obus.prototype */ {
      * @returns {Obus}
      * */
     add: function (path, data) {
-        this.__self.__addByParts(this.__root, this.__self.parse(path), data);
+        this.__self.add(this.__root, path, data);
 
         return this;
     },
@@ -55,7 +55,7 @@ var Obus = inherit(/** @lends Obus.prototype */ {
      * */
     del: function (path) {
 
-        return this.__self.__delByParts(this.__root, this.__self.parse(path));
+        return this.__self.del(this.__root, path);
     },
 
     /**
@@ -69,9 +69,8 @@ var Obus = inherit(/** @lends Obus.prototype */ {
      * @returns {*}
      * */
     get: function (path, def) {
-        var parts = this.__self.parse(path);
 
-        return this.__self.__getByParts(this.__root, parts, def);
+        return this.__self.get(this.__root, path, def);
     },
 
     /**
@@ -85,7 +84,7 @@ var Obus = inherit(/** @lends Obus.prototype */ {
      * */
     has: function (path) {
 
-        return this.__self.__hasByParts(this.__root, this.__self.parse(path));
+        return this.__self.has(this.__root, path);
     },
 
     /**
@@ -99,7 +98,7 @@ var Obus = inherit(/** @lends Obus.prototype */ {
      * @returns {Obus}
      * */
     set: function (path, data) {
-        this.__self.__setByParts(this.__root, this.__self.parse(path), data);
+        this.__self.set(this.__root, path, data);
 
         return this;
     },
@@ -124,6 +123,39 @@ var Obus = inherit(/** @lends Obus.prototype */ {
      * @memberOf {Obus}
      * @method
      *
+     * @param {Object} root
+     * @param {String} path
+     * @param {*} data
+     *
+     * @returns {Object}
+     * */
+    add: function (root, path, data) {
+
+        return this.__addByParts(root, this.parse(path), data);
+    },
+
+    /**
+     * @public
+     * @static
+     * @memberOf {Obus}
+     * @method
+     *
+     * @param {Object} root
+     * @param {String} path
+     *
+     * @returns {Boolean}
+     * */
+    del: function (root, path) {
+
+        return this.__delByParts(root, this.parse(path));
+    },
+
+    /**
+     * @public
+     * @static
+     * @memberOf {Obus}
+     * @method
+     *
      * @param {String} s
      *
      * @returns {String}
@@ -139,18 +171,112 @@ var Obus = inherit(/** @lends Obus.prototype */ {
      * @memberOf {Obus}
      * @method
      *
+     * @param {Object} root
+     * @param {String} path
+     * @param {*} [def]
+     *
+     * @returns {*}
+     * */
+    get: function (root, path, def) {
+
+        return this.__getByParts(root, this.parse(path), def);
+    },
+
+    /**
+     * @public
+     * @static
+     * @memberOf {Obus}
+     * @method
+     *
+     * @param {Object} root
+     * @param {String} path
+     *
+     * @returns {Boolean}
+     * */
+    has: function (root, path) {
+
+        return this.__hasByParts(root, this.parse(path));
+    },
+
+    /**
+     * @public
+     * @static
+     * @memberOf {Obus}
+     * @method
+     *
+     * @param {Object} root
+     * @param {*} data
+     *
+     * @returns {Object}
+     * */
+    merge: function (root, data) {
+
+        if (_.isObject(root)) {
+//            {a: 42} + {b: 42} = {a: 42, b: 42}
+            if (_.isObject(data)) {
+                _.forOwn(data, function (data, k) {
+                    root[k] = this.__merge(root, k, data);
+                }, this);
+
+                return root;
+            }
+
+            //  [1, 2] + 3 = [1, 2,3]
+            if (_.isArray(root)) {
+                root.push(data);
+
+                return root;
+            }
+
+            //  {} + 5 = {}
+            return root;
+        }
+
+        //  5 + {} = {}
+        if (_.isObject(data)) {
+
+            return data;
+        }
+
+        //  5 + 5 = [5, 5]
+        return [root, data];
+    },
+
+    /**
+     * @public
+     * @static
+     * @memberOf {Obus}
+     * @method
+     *
      * @param {String} str
      *
      * @returns {Array<String>}
      * */
     parse: function (str) {
 
-        if (str) {
+        if (str === '') {
 
-            return this.__split(str);
+            return [];
         }
 
-        return [];
+        return this.__split(str);
+    },
+
+    /**
+     * @public
+     * @static
+     * @memberOf {Obus}
+     * @method
+     *
+     * @param {Object} root
+     * @param {String} path
+     * @param {*} data
+     *
+     * @returns {Object}
+     * */
+    set: function (root, path, data) {
+
+        return this.__setByParts(root, this.parse(path), data);
     },
 
     /**
@@ -182,20 +308,24 @@ var Obus = inherit(/** @lends Obus.prototype */ {
      * */
     __addByParts: function (root, parts, data) {
         var i;
+        var k;
         var l;
-        var part;
 
         for (i = 0, l = parts.length - 1; i < l; i += 1) {
-            part = parts[i];
+            k = parts[i];
 
-            if (!_.has(root, part) || !_.isObject(root[part])) {
-                root[part] = {};
+            if (!_.has(root, k) || !_.isObject(root[k])) {
+                root[k] = {};
             }
 
-            root = root[part];
+            root = root[k];
         }
 
-        return this.__merge(root, parts[l], data);
+        k = parts[l];
+
+        root[k] = this.__merge(root, k, data);
+
+        return root[k];
     },
 
     /**
@@ -211,12 +341,14 @@ var Obus = inherit(/** @lends Obus.prototype */ {
      * */
     __delByParts: function (root, parts) {
         var i;
+        var k;
         var l;
 
         for (i = 0, l = parts.length - 1; i < l; i += 1) {
+            k = parts[i];
 
-            if (_.isObject(root)) {
-                root = root[parts[i]];
+            if (_.has(root, k) && _.isObject(root[k])) {
+                root = root[k];
 
                 continue;
             }
@@ -224,12 +356,7 @@ var Obus = inherit(/** @lends Obus.prototype */ {
             return false;
         }
 
-        if (_.isObject(root)) {
-
-            return delete root[parts[l]];
-        }
-
-        return false;
+        return delete root[parts[l]];
     },
 
     /**
@@ -246,16 +373,19 @@ var Obus = inherit(/** @lends Obus.prototype */ {
      * */
     __getByParts: function (root, parts, def) {
         var i;
+        var k;
         var l;
 
         for (i = 0, l = parts.length; i < l; i += 1) {
+            k = parts[i];
 
-            if (!_.isObject(root)) {
+            if (_.isObject(root) && _.has(root, k)) {
+                root = root[k];
 
-                return def;
+                continue;
             }
 
-            root = root[parts[i]];
+            return def;
         }
 
         if (this._isFalsy(root)) {
@@ -285,7 +415,7 @@ var Obus = inherit(/** @lends Obus.prototype */ {
         for (i = 0, l = parts.length; i < l; i += 1) {
             k = parts[i];
 
-            if (_.has(root, k)) {
+            if (_.isObject(root) && _.has(root, k)) {
                 root = root[k];
 
                 continue;
@@ -304,51 +434,19 @@ var Obus = inherit(/** @lends Obus.prototype */ {
      * @method
      *
      * @param {Object} root
-     * @param {String} part
+     * @param {String} k
      * @param {*} data
      *
      * @returns {Object}
      * */
-    __merge: function (root, part, data) {
+    __merge: function (root, k, data) {
 
-        if (!_.has(root, part)) {
-            root[part] = data;
+        if (_.has(root, k)) {
 
-            return root[part];
+            return this.merge(root[k], data);
         }
 
-        if (_.isObject(root[part])) {
-//            {a: 42} + {b: 42} = {a: 42, b: 42}
-            if (_.isObject(data)) {
-                _.forOwn(data, function (data, k) {
-                    this.__merge(root[part], k, data);
-                }, this);
-
-                return root[part];
-            }
-
-            //  [1,2] + 3 = [1,2,3]
-            if (_.isArray(root[part])) {
-                root[part].push(data);
-
-                return root[part];
-            }
-
-            //  {} + 5 = {}
-            return root[part];
-        }
-
-        //  5 + {} = {}
-        if (_.isObject(data)) {
-            root[part] = data;
-
-            return root[part];
-        }
-
-        //  5 + 5 = [5, 5]
-        root[part] = [root[part], data];
-
-        return root[part];
+        return data;
     },
 
     /**
@@ -365,23 +463,23 @@ var Obus = inherit(/** @lends Obus.prototype */ {
      * */
     __setByParts: function (root, parts, data) {
         var i;
+        var k;
         var l;
-        var part;
 
         for (i = 0, l = parts.length - 1; i < l; i += 1) {
-            part = parts[i];
+            k = parts[i];
 
-            if (!_.has(root, part) || !_.isObject(root[part])) {
-                root[part] = {};
+            if (!_.has(root, k) || !_.isObject(root[k])) {
+                root[k] = {};
             }
 
-            root = root[part];
+            root = root[k];
         }
 
-        part = parts[l];
-        root[part] = data;
+        k = parts[l];
+        root[k] = data;
 
-        return root[part];
+        return root[k];
     },
 
     /**
