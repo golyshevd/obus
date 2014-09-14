@@ -5,6 +5,9 @@ var _ = require('lodash-node');
 var assert = require('chai').assert;
 var util = require('util');
 
+/*eslint no-extend-native: 0*/
+Object.prototype.bug = 42;
+
 describe('core/parser', function () {
     /*eslint max-nested-callbacks: 0*/
     var Obus = require('../core/obus');
