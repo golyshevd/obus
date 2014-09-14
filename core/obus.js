@@ -1,32 +1,24 @@
 'use strict';
 
-var _ = require('lodash-node');
-var inherit = require('inherit');
+var Cache = /** @type Cache */ require('./util/cache');
+
+var hasProperty = Object.prototype.hasOwnProperty;
 
 /**
  * @class Obus
  * */
-var Obus = inherit(/** @lends Obus.prototype */ {
+function Obus(root) {
 
     /**
      * @private
      * @memberOf {Obus}
-     * @method
-     *
-     * @constructs
-     *
-     * @param {Object} root
+     * @property
+     * @type {Object}
      * */
-    __constructor: function (root) {
+    this.__root = Object(root);
+}
 
-        /**
-         * @private
-         * @memberOf {Obus}
-         * @property
-         * @type {Object}
-         * */
-        this.__root = Object(root);
-    },
+Obus.prototype = {
 
     /**
      * @public
@@ -39,7 +31,7 @@ var Obus = inherit(/** @lends Obus.prototype */ {
      * @returns {Obus}
      * */
     add: function (path, data) {
-        this.__self.add(this.__root, path, data);
+        Obus.add(this.__root, path, data);
 
         return this;
     },
@@ -55,7 +47,7 @@ var Obus = inherit(/** @lends Obus.prototype */ {
      * */
     del: function (path) {
 
-        return this.__self.del(this.__root, path);
+        return Obus.del(this.__root, path);
     },
 
     /**
@@ -70,7 +62,7 @@ var Obus = inherit(/** @lends Obus.prototype */ {
      * */
     get: function (path, def) {
 
-        return this.__self.get(this.__root, path, def);
+        return Obus.get(this.__root, path, def);
     },
 
     /**
@@ -84,7 +76,7 @@ var Obus = inherit(/** @lends Obus.prototype */ {
      * */
     has: function (path) {
 
-        return this.__self.has(this.__root, path);
+        return Obus.has(this.__root, path);
     },
 
     /**
@@ -98,7 +90,7 @@ var Obus = inherit(/** @lends Obus.prototype */ {
      * @returns {Obus}
      * */
     set: function (path, data) {
-        this.__self.set(this.__root, path, data);
+        Obus.set(this.__root, path, data);
 
         return this;
     },
@@ -115,426 +107,353 @@ var Obus = inherit(/** @lends Obus.prototype */ {
         return this.__root;
     }
 
-}, {
+};
 
-    /**
-     * @public
-     * @static
-     * @memberOf {Obus}
-     * @method
-     *
-     * @param {Object} root
-     * @param {String} path
-     * @param {*} data
-     *
-     * @returns {Object}
-     * */
-    add: function (root, path, data) {
+/**
+ * @public
+ * @static
+ * @memberOf {Obus}
+ * @method
+ *
+ * @param {Object} root
+ * @param {String} path
+ * @param {*} data
+ *
+ * @returns {Object}
+ * */
+Obus.add = function (root, path, data) {
+    var i;
+    var k;
+    var l;
+    var parts = Obus.parse(path);
 
-        return this.__addByParts(root, this.parse(path), data);
-    },
+    for (i = 0, l = parts.length - 1; i < l; i += 1) {
+        k = parts[i];
 
-    /**
-     * @public
-     * @static
-     * @memberOf {Obus}
-     * @method
-     *
-     * @param {Object} root
-     * @param {String} path
-     *
-     * @returns {Boolean}
-     * */
-    del: function (root, path) {
-
-        return this.__delByParts(root, this.parse(path));
-    },
-
-    /**
-     * @public
-     * @static
-     * @memberOf {Obus}
-     * @method
-     *
-     * @param {String} s
-     *
-     * @returns {String}
-     * */
-    escape: function (s) {
-
-        return s.replace(/[\\.]/g, '\\$&');
-    },
-
-    /**
-     * @public
-     * @static
-     * @memberOf {Obus}
-     * @method
-     *
-     * @param {Object} root
-     * @param {String} path
-     * @param {*} [def]
-     *
-     * @returns {*}
-     * */
-    get: function (root, path, def) {
-
-        return this.__getByParts(root, this.parse(path), def);
-    },
-
-    /**
-     * @public
-     * @static
-     * @memberOf {Obus}
-     * @method
-     *
-     * @param {Object} root
-     * @param {String} path
-     *
-     * @returns {Boolean}
-     * */
-    has: function (root, path) {
-
-        return this.__hasByParts(root, this.parse(path));
-    },
-
-    /**
-     * @public
-     * @static
-     * @memberOf {Obus}
-     * @method
-     *
-     * @param {Object} root
-     * @param {*} data
-     *
-     * @returns {Object}
-     * */
-    merge: function (root, data) {
-
-        if (_.isObject(root)) {
-//            {a: 42} + {b: 42} = {a: 42, b: 42}
-            if (_.isObject(data)) {
-                _.forOwn(data, function (data, k) {
-                    root[k] = this.__merge(root, k, data);
-                }, this);
-
-                return root;
-            }
-
-            //  [1, 2] + 3 = [1, 2,3]
-            if (_.isArray(root)) {
-                root.push(data);
-
-                return root;
-            }
-
-            //  {} + 5 = {}
-            return root;
-        }
-
-        //  5 + {} = {}
-        if (_.isObject(data)) {
-
-            return data;
-        }
-
-        //  5 + 5 = [5, 5]
-        return [root, data];
-    },
-
-    /**
-     * @public
-     * @static
-     * @memberOf {Obus}
-     * @method
-     *
-     * @param {String} str
-     *
-     * @returns {Array<String>}
-     * */
-    parse: function (str) {
-
-        if (str === '') {
-
-            return [];
-        }
-
-        return this.__split(str);
-    },
-
-    /**
-     * @public
-     * @static
-     * @memberOf {Obus}
-     * @method
-     *
-     * @param {Object} root
-     * @param {String} path
-     * @param {*} data
-     *
-     * @returns {Object}
-     * */
-    set: function (root, path, data) {
-
-        return this.__setByParts(root, this.parse(path), data);
-    },
-
-    /**
-     * @protected
-     * @static
-     * @memberOf Obus
-     * @method
-     *
-     * @param {*} v
-     *
-     * @returns {Boolean}
-     * */
-    _isFalsy: function (v) {
-
-        return _.isUndefined(v);
-    },
-
-    /**
-     * @private
-     * @static
-     * @memberOf Obus
-     * @method
-     *
-     * @param {Object} root
-     * @param {Array} parts
-     * @param {*} data
-     *
-     * @returns {Object}
-     * */
-    __addByParts: function (root, parts, data) {
-        var i;
-        var k;
-        var l;
-
-        for (i = 0, l = parts.length - 1; i < l; i += 1) {
-            k = parts[i];
-
-            if (!_.has(root, k) || !_.isObject(root[k])) {
-                root[k] = {};
-            }
-
+        if (root && hasProperty.call(root, k) && root[k] && typeof root[k] === 'object') {
             root = root[k];
+
+            continue;
         }
 
-        k = parts[l];
-
-        root[k] = this.__merge(root, k, data);
-
-        return root[k];
-    },
-
-    /**
-     * @private
-     * @static
-     * @memberOf {Obus}
-     * @method
-     *
-     * @param {Object} root
-     * @param {Array<String>} parts
-     *
-     * @returns {Boolean}
-     * */
-    __delByParts: function (root, parts) {
-        var i;
-        var k;
-        var l;
-
-        for (i = 0, l = parts.length - 1; i < l; i += 1) {
-            k = parts[i];
-
-            if (_.has(root, k) && _.isObject(root[k])) {
-                root = root[k];
-
-                continue;
-            }
-
-            return false;
-        }
-
-        return delete root[parts[l]];
-    },
-
-    /**
-     * @private
-     * @static
-     * @memberOf Obus
-     * @method
-     *
-     * @param {Object} root
-     * @param {Array} parts
-     * @param {*} def
-     *
-     * @returns {*}
-     * */
-    __getByParts: function (root, parts, def) {
-        var i;
-        var k;
-        var l;
-
-        for (i = 0, l = parts.length; i < l; i += 1) {
-            k = parts[i];
-
-            if (_.isObject(root) && _.has(root, k)) {
-                root = root[k];
-
-                continue;
-            }
-
-            return def;
-        }
-
-        if (this._isFalsy(root)) {
-
-            return def;
-        }
-
-        return root;
-    },
-
-    /**
-     * @private
-     * @static
-     * @memberOf Obus
-     * @method
-     *
-     * @param {Object} root
-     * @param {Array} parts
-     *
-     * @returns {Boolean}
-     * */
-    __hasByParts: function (root, parts) {
-        var i;
-        var k;
-        var l;
-
-        for (i = 0, l = parts.length; i < l; i += 1) {
-            k = parts[i];
-
-            if (_.isObject(root) && _.has(root, k)) {
-                root = root[k];
-
-                continue;
-            }
-
-            return false;
-        }
-
-        return !this._isFalsy(root);
-    },
-
-    /**
-     * @private
-     * @static
-     * @memberOf {Obus}
-     * @method
-     *
-     * @param {Object} root
-     * @param {String} k
-     * @param {*} data
-     *
-     * @returns {Object}
-     * */
-    __merge: function (root, k, data) {
-
-        if (_.has(root, k)) {
-
-            return this.merge(root[k], data);
-        }
-
-        return data;
-    },
-
-    /**
-     * @private
-     * @static
-     * @memberOf Obus
-     * @method
-     *
-     * @param {Object} root
-     * @param {Array} parts
-     * @param {*} data
-     *
-     * @returns {Object}
-     * */
-    __setByParts: function (root, parts, data) {
-        var i;
-        var k;
-        var l;
-
-        for (i = 0, l = parts.length - 1; i < l; i += 1) {
-            k = parts[i];
-
-            if (!_.has(root, k) || !_.isObject(root[k])) {
-                root[k] = {};
-            }
-
-            root = root[k];
-        }
-
-        k = parts[l];
-        root[k] = data;
-
-        return root[k];
-    },
-
-    /**
-     * @private
-     * @static
-     * @memberOf {Obus}
-     * @method
-     *
-     * @param {String} str
-     *
-     * @returns {Array<String>}
-     * */
-    __split: function (str) {
-        var chr;
-        var i;
-        var isEscaped = false;
-        var l;
-        var part = '';
-        var parts = [];
-
-        function acceptPart() {
-            parts[parts.length] = part;
-            part = '';
-        }
-
-        for (i = 0, l = str.length; i < l; i += 1) {
-            chr = str.charAt(i);
-
-            if (chr === '\\' && !isEscaped) {
-                isEscaped = true;
-
-                continue;
-            }
-
-            if (isEscaped) {
-                part += chr;
-                isEscaped = false;
-
-                continue;
-            }
-
-            if (chr === '.') {
-                acceptPart();
-
-                continue;
-            }
-
-            part += chr;
-        }
-
-        acceptPart();
-
-        return parts;
+        root = root[k] = {};
     }
 
-});
+    k = parts[l];
+
+    root[k] = Obus.__merge(root, k, data);
+
+    return root[k];
+};
+
+/**
+ * @public
+ * @static
+ * @memberOf {Obus}
+ * @property
+ * @type {Cache}
+ * */
+Obus.cache = new Cache(0xFFFF);
+
+/**
+ * @public
+ * @static
+ * @memberOf {Obus}
+ * @method
+ *
+ * @param {Object} root
+ * @param {String} path
+ *
+ * @returns {Boolean}
+ * */
+Obus.del = function (root, path) {
+    var i;
+    var k;
+    var l;
+    var parts = Obus.parse(path);
+
+    for (i = 0, l = parts.length - 1; i < l; i += 1) {
+        k = parts[i];
+
+        if (root && hasProperty.call(root, k) && root[k] && typeof root[k] === 'object') {
+            root = root[k];
+
+            continue;
+        }
+
+        return false;
+    }
+
+    return delete root[parts[l]];
+};
+
+/**
+ * @public
+ * @static
+ * @memberOf {Obus}
+ * @method
+ *
+ * @param {String} s
+ *
+ * @returns {String}
+ * */
+Obus.escape = function (s) {
+
+    return s.replace(/[\\.]/g, '\\$&');
+};
+
+/**
+ * @public
+ * @static
+ * @memberOf {Obus}
+ * @method
+ *
+ * @param {Object} root
+ * @param {String} path
+ * @param {*} [def]
+ *
+ * @returns {*}
+ * */
+Obus.get = function (root, path, def) {
+    var i;
+    var k;
+    var l;
+    var parts = Obus.parse(path);
+
+    for (i = 0, l = parts.length; i < l; i += 1) {
+        k = parts[i];
+
+        if (root && typeof root === 'object' && hasProperty.call(root, k)) {
+            root = root[k];
+
+            continue;
+        }
+
+        return def;
+    }
+
+    if (this._isFalsy(root)) {
+
+        return def;
+    }
+
+    return root;
+};
+
+/**
+ * @public
+ * @static
+ * @memberOf {Obus}
+ * @method
+ *
+ * @param {Object} root
+ * @param {String} path
+ *
+ * @returns {Boolean}
+ * */
+Obus.has = function (root, path) {
+    var i;
+    var k;
+    var l;
+    var parts = Obus.parse(path);
+
+    for (i = 0, l = parts.length; i < l; i += 1) {
+        k = parts[i];
+
+        if (root && typeof root === 'object' && hasProperty.call(root, k)) {
+            root = root[k];
+
+            continue;
+        }
+
+        return false;
+    }
+
+    return !Obus._isFalsy(root);
+};
+
+/**
+ * @public
+ * @static
+ * @memberOf {Obus}
+ * @method
+ *
+ * @param {Object} root
+ * @param {*} data
+ *
+ * @returns {Object}
+ * */
+Obus.merge = function (root, data) {
+    /*eslint complexity: 0*/
+    var k;
+
+    if (root && typeof root === 'object') {
+//        {a: 42} + {b: 42} = {a: 42, b: 42}
+        if (data && typeof data === 'object') {
+            for (k in data) {
+                if (hasProperty.call(data, k)) {
+                    root[k] = Obus.__merge(root, k, data[k]);
+                }
+            }
+        } else if (Array.isArray(root)) {
+//            [1, 2] + 3 = [1, 2,3]
+            root[root.length] = data;
+        }
+
+//        {} + 5 = {}
+    } else if (data && typeof data === 'object') {
+//        5 + {} = {}
+        root = data;
+    } else {
+//        5 + 5 = [5, 5]
+        root = [root, data];
+    }
+
+    return root;
+};
+
+/**
+ * @public
+ * @static
+ * @memberOf {Obus}
+ * @method
+ *
+ * @param {String} str
+ *
+ * @returns {Array<String>}
+ * */
+Obus.parse = function (str) {
+    var parts = Obus.cache.get(str);
+
+    if (!parts) {
+        parts = str === '' ? [] : Obus.__split(str);
+
+        Obus.cache.set(str, parts);
+    }
+
+    return parts;
+};
+
+/**
+ * @public
+ * @static
+ * @memberOf {Obus}
+ * @method
+ *
+ * @param {Object} root
+ * @param {String} path
+ * @param {*} data
+ *
+ * @returns {Object}
+ * */
+Obus.set = function (root, path, data) {
+    var i;
+    var k;
+    var l;
+    var parts = Obus.parse(path);
+
+    for (i = 0, l = parts.length - 1; i < l; i += 1) {
+        k = parts[i];
+
+        if (root && hasProperty.call(root, k) && root[k] && typeof root[k] === 'object') {
+            root = root[k];
+
+            continue;
+        }
+
+        root = root[k] = {};
+    }
+
+    k = parts[l];
+    root[k] = data;
+
+    return root[k];
+};
+
+/**
+ * @protected
+ * @static
+ * @memberOf Obus
+ * @method
+ *
+ * @param {*} v
+ *
+ * @returns {Boolean}
+ * */
+Obus._isFalsy = function (v) {
+
+    return v === void 0;
+};
+
+/**
+ * @private
+ * @static
+ * @memberOf {Obus}
+ * @method
+ *
+ * @param {Object} root
+ * @param {String} k
+ * @param {*} data
+ *
+ * @returns {Object}
+ * */
+Obus.__merge = function (root, k, data) {
+
+    if (root && hasProperty.call(root, k)) {
+
+        return Obus.merge(root[k], data);
+    }
+
+    return data;
+};
+
+/**
+ * @private
+ * @static
+ * @memberOf {Obus}
+ * @method
+ *
+ * @param {String} str
+ *
+ * @returns {Array<String>}
+ * */
+Obus.__split = function (str) {
+    var chr;
+    var i;
+    var isEscaped = false;
+    var l;
+    var part = '';
+    var parts = [];
+
+    for (i = 0, l = str.length; i < l; i += 1) {
+        chr = str.charAt(i);
+
+        if (chr === '\\' && !isEscaped) {
+            isEscaped = true;
+
+            continue;
+        }
+
+        if (isEscaped) {
+            part += chr;
+            isEscaped = false;
+
+            continue;
+        }
+
+        if (chr === '.') {
+            parts[parts.length] = part;
+            part = '';
+
+            continue;
+        }
+
+        part += chr;
+    }
+
+    parts[parts.length] = part;
+
+    return parts;
+};
 
 module.exports = Obus;

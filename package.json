@@ -7,11 +7,11 @@
         "Golyshev Dmitrii <golyshev.dmitry@yandex.ru>"
     ],
     "dependencies": {
-        "lodash-node": "2.4.1",
-        "inherit": "2.2.2"
+        "double-ended-queue": "2.0.0-0"
     },
     "description": "deep access to object properties",
     "devDependencies": {
+        "lodash-node": "2.4.1",
         "glob": "4.0.5",
         "gulp": "3.8.8",
         "gulp-mocha": "1.1.0",
@@ -20,7 +20,8 @@
         "gulp-eslint": "0.1.8",
         "through2": "0.6.1",
         "gulp-util": "3.0.1",
-        "chai": "1.9.1"
+        "chai": "1.9.1",
+        "benchmark": "1.0.0"
     },
     "license": "MIT",
     "main": "core/obus",
