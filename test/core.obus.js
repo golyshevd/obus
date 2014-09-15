@@ -164,72 +164,70 @@ describe('core/parser', function () {
         });
     });
 
-    describe('{Obus}.add', function () {
+    describe('{Obus}.extend', function () {
         var samples = [
-            [
-                {a: 42},
-                'a',
-                43,
-                {a: [42, 43]}
-            ],
-            [
-                {a: {b: 42}},
-                'a',
-                {c: 43},
-                {a: {b: 42, c: 43}}
-            ],
-            [
-                {a: {b: 42}},
-                'a.b',
-                43,
-                {a: {b: [42, 43]}}
-            ],
             [
                 {},
                 'a.b',
-                42,
-                {a: {b: 42}}
-            ],
-            [
-                {a: {b: 42}},
-                'a',
                 {c: 43},
-                {a: {b: 42, c: 43}}
-            ],
-            [
-                {a: {b: 42}},
-                'a',
-                {b: 43},
-                {a: {b: [42, 43]}}
-            ],
-            [
-                {a: {b: [1, 2]}},
-                'a.b',
-                3,
-                {a: {b: [1, 2, 3]}}
-            ],
-            [
-                {a: {b: {}}},
-                'a.b',
-                42,
-                {a: {b: {}}}
+                {a: {b: {c: 43}}}
             ],
             [
                 {a: {b: 42}},
                 'a.b',
-                {c: 42},
-                {a: {b: {c: 42}}}
+                {c: 43},
+                {a: {b: {c: 43}}}
+            ],
+            [
+                {a: {b: {c: 42}}},
+                'a.b',
+                {d: 43},
+                {a: {b: {c: 42, d: 43}}}
             ]
         ];
 
-        var header = 'new Obus(%j).add(%j, %j).valueOf() should return %j';
+        var header = 'new Obus(%j).extend(%j, %j).valueOf() should return %j';
 
         _.forEach(samples, function (s) {
             var title = util.format(header, s[0], s[1], s[2], s[3]);
             var obus = new Obus(s[0]);
 
             it(title, function () {
-                assert.deepEqual(obus.add(s[1], s[2]).valueOf(), s[3]);
+                assert.deepEqual(obus.extend(s[1], s[2]).valueOf(), s[3]);
+            });
+        });
+    });
+
+    describe('{Obus}.push', function () {
+        var samples = [
+            [
+                {},
+                'a.b.c',
+                42,
+                {a: {b: {c: 42}}}
+            ],
+            [
+                {a: {b: {c: 42}}},
+                'a.b.c',
+                43,
+                {a: {b: {c: [42, 43]}}}
+            ],
+            [
+                {a: {b: {c: [42, 43]}}},
+                'a.b.c',
+                44,
+                {a: {b: {c: [42, 43, 44]}}}
+            ]
+        ];
+
+        var header = 'new Obus(%j).push(%j, %j).valueOf() should return %j';
+
+        _.forEach(samples, function (s) {
+            var title = util.format(header, s[0], s[1], s[2], s[3]);
+            var obus = new Obus(s[0]);
+
+            it(title, function () {
+                assert.deepEqual(obus.push(s[1], s[2]).valueOf(), s[3]);
             });
         });
     });
