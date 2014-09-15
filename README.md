@@ -55,13 +55,19 @@ obus.has('a'); // -> true
 obus.has('a.b.c'); // -> false
 ```
 
-###```Obus obus.add(String path, * data)```
-Merges existing data with the given one
+###```Obus obus.extend(String path, * data)```
+Extends existing data with the given value
 ```js
 var obus = new Obus({a: {b: 42}});
-obus.add('a', {c: 42}).valueOf(); // -> {a: {b: 42, c: 42}}
-obus.add('a.b', 43).valueOf(); // -> {a: {b: [42, 43], c: 42}}
-obus.add('a', {c: 43}).valueOf(); // -> {a: {b: [42, 43], c: [42, 43]}}
+obus.extend('a', {c: 42}).valueOf(); // -> {a: {b: 42, c: 42}}
 ```
+
+###```Obus obus.push(String path, * data)```
+Pushes the given value to the existing data
+```js
+var obus = new Obus({a: {b: 42}});
+obus.push('a.b', 43).valueOf(); // -> {a: {b: [42, 43]]}}
+```
+
 ##License
 [MIT](LICENSE)

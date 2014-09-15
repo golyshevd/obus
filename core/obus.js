@@ -26,14 +26,12 @@ Obus.prototype = {
      * @method
      *
      * @param {String} path
-     * @param {*} data
      *
-     * @returns {Obus}
+     * @returns {Boolean}
      * */
-    add: function (path, data) {
-        Obus.add(this.__root, path, data);
+    del: function (path) {
 
-        return this;
+        return Obus.del(this.__root, path);
     },
 
     /**
@@ -42,12 +40,14 @@ Obus.prototype = {
      * @method
      *
      * @param {String} path
+     * @param {*} data
      *
-     * @returns {Boolean}
+     * @returns {Obus}
      * */
-    del: function (path) {
+    extend: function (path, data) {
+        Obus.extend(this.__root, path, data);
 
-        return Obus.del(this.__root, path);
+        return this;
     },
 
     /**
@@ -77,6 +77,22 @@ Obus.prototype = {
     has: function (path) {
 
         return Obus.has(this.__root, path);
+    },
+
+    /**
+     * @public
+     * @memberOf {Obus}
+     * @method
+     *
+     * @param {String} path
+     * @param {*} data
+     *
+     * @returns {Obus}
+     * */
+    push: function (path, data) {
+        Obus.push(this.__root, path, data);
+
+        return this;
     },
 
     /**
@@ -121,7 +137,7 @@ Obus.prototype = {
  *
  * @returns {Object}
  * */
-Obus.add = function (root, path, data) {
+Obus.extend = function (root, path, data) {
     var i;
     var k;
     var l;
@@ -141,7 +157,66 @@ Obus.add = function (root, path, data) {
 
     k = parts[l];
 
-    root[k] = Obus.__merge(root, k, data);
+    if (hasProperty.call(root, k) && root[k] && typeof root[k] === 'object') {
+        for (i in data) {
+            if (hasProperty.call(data, i)) {
+                root[k][i] = data[i];
+            }
+        }
+
+        return root[k];
+    }
+
+    root[k] = data;
+
+    return root[k];
+};
+
+/**
+ * @public
+ * @static
+ * @memberOf {Obus}
+ * @method
+ *
+ * @param {Object} root
+ * @param {String} path
+ * @param {*} data
+ *
+ * @returns {Object}
+ * */
+Obus.push = function (root, path, data) {
+    var i;
+    var k;
+    var l;
+    var parts = Obus.parse(path);
+
+    for (i = 0, l = parts.length - 1; i < l; i += 1) {
+        k = parts[i];
+
+        if (root && hasProperty.call(root, k) && root[k] && typeof root[k] === 'object') {
+            root = root[k];
+
+            continue;
+        }
+
+        root = root[k] = {};
+    }
+
+    k = parts[l];
+
+    if (hasProperty.call(root, k)) {
+        if (Array.isArray(root[k])) {
+            root[k].push(data);
+
+            return root[k];
+        }
+
+        root[k] = [root[k], data];
+
+        return root[k];
+    }
+
+    root[k] = data;
 
     return root[k];
 };
@@ -278,46 +353,6 @@ Obus.has = function (root, path) {
  * @memberOf {Obus}
  * @method
  *
- * @param {Object} root
- * @param {*} data
- *
- * @returns {Object}
- * */
-Obus.merge = function (root, data) {
-    /*eslint complexity: 0*/
-    var k;
-
-    if (root && typeof root === 'object') {
-//        {a: 42} + {b: 42} = {a: 42, b: 42}
-        if (data && typeof data === 'object') {
-            for (k in data) {
-                if (hasProperty.call(data, k)) {
-                    root[k] = Obus.__merge(root, k, data[k]);
-                }
-            }
-        } else if (Array.isArray(root)) {
-//            [1, 2] + 3 = [1, 2,3]
-            root[root.length] = data;
-        }
-
-//        {} + 5 = {}
-    } else if (data && typeof data === 'object') {
-//        5 + {} = {}
-        root = data;
-    } else {
-//        5 + 5 = [5, 5]
-        root = [root, data];
-    }
-
-    return root;
-};
-
-/**
- * @public
- * @static
- * @memberOf {Obus}
- * @method
- *
  * @param {String} str
  *
  * @returns {Array<String>}
@@ -383,28 +418,6 @@ Obus.set = function (root, path, data) {
 Obus._isFalsy = function (v) {
 
     return v === void 0;
-};
-
-/**
- * @private
- * @static
- * @memberOf {Obus}
- * @method
- *
- * @param {Object} root
- * @param {String} k
- * @param {*} data
- *
- * @returns {Object}
- * */
-Obus.__merge = function (root, k, data) {
-
-    if (root && hasProperty.call(root, k)) {
-
-        return Obus.merge(root[k], data);
-    }
-
-    return data;
 };
 
 /**
