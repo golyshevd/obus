@@ -1,64 +1,87 @@
 'use strict';
 
-var _ = require('lodash-node');
+var EslintConfig = require('eslint/lib/config');
 var gulpJscs = require('gulp-jscs');
-var gulpEslint = require('gulp-eslint');
+
+var _ = require('lodash-node');
+var eslintLinter = require('eslint').linter;
+var eslintStylishFormatter = require('eslint/lib/formatters/stylish');
+var glob = require('glob');
 var gutil = require('gulp-util');
-var lintPatterns = [
+var linterPaths = [
     'core/**/*.js',
     'test/**/*.js',
     'tools/**/*.js',
     '*.js'
 ];
-var through2 = require('through2');
+var vow = require('vow');
+var vowFs = require('vow-fs');
 
-function runJscs() {
+function readFiles(paths) {
+    var sources = _.map(paths, function (path) {
 
-    return this.src(lintPatterns).pipe(gulpJscs());
+        return vowFs.read(path, 'utf-8').then(function (data) {
+
+            return {
+                data: data,
+                path: path
+            };
+        });
+    });
+
+    return vow.all(sources);
+}
+
+function eslintPromise(paths, configPath) {
+    var config = new EslintConfig({
+        configFile: configPath
+    });
+
+    config = config.useSpecificConfig;
+
+    return readFiles(paths).then(function (sources) {
+
+        return _.map(sources, function (source) {
+
+            return {
+                filePath: source.path,
+                messages: eslintLinter.verify(source.data, config, source.path)
+            };
+        });
+    });
 }
 
 function runEslint(done) {
-    var error;
-    var noErrors = true;
+    /*eslint no-console: 0*/
+    var paths = _.reduce(linterPaths, function (paths, globPattern) {
+        return paths.concat(glob.sync(globPattern));
+    }, []);
 
-    this.src(lintPatterns).
-        pipe(gulpEslint()).
-        pipe(through2.obj(function (file, enc, cb) {
+    eslintPromise(paths, '.eslintrc')
+        .done(function (results) {
+            var message;
 
-            if (file.eslint) {
-                noErrors = noErrors &&
-                           !_.find(file.eslint.messages, {
-                               severity: 2
-                           });
+            if (_.isEmpty(results)) {
+                return done();
             }
 
-            this.push(file);
+            message = eslintStylishFormatter(results);
 
-            cb();
-        })).
-        pipe(gulpEslint.format(null, function (message) {
-            error = new gutil.PluginError('gulp-eslint', message, {
-                showStack: false
-            });
-        })).once('end', function () {
-
-            if (noErrors) {
-
-                if (error instanceof gutil.PluginError) {
-                    /*eslint no-console: 0*/
-                    console.error(error.toString());
-                }
-
-                done();
-
-            } else {
-                done(error);
+            //  среди сообщений есть ОШИБКИ (там могут быть просто ворнинги)
+            if (_.find(results, {messages: [{severity: 2}]})) {
+                return done(new gutil.PluginError('eslint-linter', message));
             }
-        });
+
+            console.log(message);
+
+            done();
+        }, done);
 }
 
 module.exports = function () {
-    this.task('jscs', [], runJscs);
+    this.task('jscs', [], function () {
+        return this.src(linterPaths).pipe(gulpJscs());
+    });
     this.task('eslint', [], runEslint);
     this.task('lint', ['jscs'], runEslint);
 };
