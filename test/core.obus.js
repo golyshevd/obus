@@ -2,7 +2,7 @@
 'use strict';
 
 var _ = require('lodash-node');
-var assert = require('chai').assert;
+var assert = require('assert');
 var util = require('util');
 
 /*eslint no-extend-native: 0*/
@@ -11,53 +11,6 @@ Object.prototype.bug = 42;
 describe('core/parser', function () {
     /*eslint max-nested-callbacks: 0*/
     var Obus = require('../core/obus');
-
-    describe('Obus.parse', function () {
-
-        var samples = [
-            ['a.b', ['a', 'b']],
-            ['', []],
-            ['a\\.b', ['a.b']]
-        ];
-
-        var header = 'Obus.parse(%j) should return %j';
-
-        _.forEach(samples, function (s) {
-            var title = util.format(header, null, s[0], s[1]);
-
-            it(title, function () {
-                assert.deepEqual(Obus.parse(s[0]), s[1]);
-            });
-        });
-    });
-
-    describe('Obus.escape', function () {
-
-        var samples = [
-            [
-                'a',
-                'a'
-            ],
-            [
-                'a.b',
-                'a\\.b'
-            ],
-            [
-                '\\ ',
-                '\\\\ '
-            ]
-        ];
-
-        var header = 'Obus.escape(%j) should return %j';
-
-        _.forEach(samples, function (s) {
-            var title = util.format(header, null, s[0], s[1]);
-
-            it(title, function () {
-                assert.deepEqual(Obus.escape(s[0]), s[1]);
-            });
-        });
-    });
 
     describe('{Obus}.get', function () {
         var samples = [
@@ -91,9 +44,10 @@ describe('core/parser', function () {
 
         _.forEach(samples, function (s) {
             var title = util.format(header, s[0], s[1], s[2], s[3]);
-            var obus = new Obus(s[0]);
 
             it(title, function () {
+                var obus = new Obus();
+                obus.set(void 0, s[0]);
                 assert.deepEqual(obus.get(s[1], s[2]), s[3]);
             });
         });
@@ -109,7 +63,7 @@ describe('core/parser', function () {
             [
                 {a: void 0},
                 'a',
-                false
+                true
             ],
             [
                 {a: 42},
@@ -122,9 +76,10 @@ describe('core/parser', function () {
 
         _.forEach(samples, function (s) {
             var title = util.format(header, s[0], s[1], s[2]);
-            var obus = new Obus(s[0]);
 
             it(title, function () {
+                var obus = new Obus();
+                obus.set(void 0, s[0]);
                 assert.deepEqual(obus.has(s[1]), s[2]);
             });
         });
@@ -149,22 +104,30 @@ describe('core/parser', function () {
                 'a.b',
                 42,
                 {a: {b: 42}}
+            ],
+            [
+                {a: 42},
+                void 0,
+                {b: 54},
+                {b: 54}
             ]
         ];
 
-        var header = 'new Obus(%j).set(%j, %j).valueOf() should return %j';
+        var header = 'new Obus(%j).set(%j, %j) should return %j';
 
         _.forEach(samples, function (s) {
             var title = util.format(header, s[0], s[1], s[2], s[3]);
-            var obus = new Obus(s[0]);
 
             it(title, function () {
-                assert.deepEqual(obus.set(s[1], s[2]).valueOf(), s[3]);
+                var obus = new Obus();
+                obus.set(void 0, s[0]);
+                obus.set(s[1], s[2]);
+                assert.deepEqual(obus, s[3]);
             });
         });
     });
 
-    describe('{Obus}.extend', function () {
+    describe('{Obus}.add', function () {
         var samples = [
             [
                 {},
@@ -183,51 +146,25 @@ describe('core/parser', function () {
                 'a.b',
                 {d: 43},
                 {a: {b: {c: 42, d: 43}}}
-            ]
-        ];
-
-        var header = 'new Obus(%j).extend(%j, %j).valueOf() should return %j';
-
-        _.forEach(samples, function (s) {
-            var title = util.format(header, s[0], s[1], s[2], s[3]);
-            var obus = new Obus(s[0]);
-
-            it(title, function () {
-                assert.deepEqual(obus.extend(s[1], s[2]).valueOf(), s[3]);
-            });
-        });
-    });
-
-    describe('{Obus}.push', function () {
-        var samples = [
+            ],
             [
                 {},
-                'a.b.c',
-                42,
-                {a: {b: {c: 42}}}
-            ],
-            [
-                {a: {b: {c: 42}}},
-                'a.b.c',
-                43,
-                {a: {b: {c: [42, 43]}}}
-            ],
-            [
-                {a: {b: {c: [42, 43]}}},
-                'a.b.c',
-                44,
-                {a: {b: {c: [42, 43, 44]}}}
+                void 0,
+                {a: 42},
+                {a: 42}
             ]
         ];
 
-        var header = 'new Obus(%j).push(%j, %j).valueOf() should return %j';
+        var header = 'new Obus(%j).add(%j, %j) should return %j';
 
         _.forEach(samples, function (s) {
             var title = util.format(header, s[0], s[1], s[2], s[3]);
-            var obus = new Obus(s[0]);
 
             it(title, function () {
-                assert.deepEqual(obus.push(s[1], s[2]).valueOf(), s[3]);
+                var obus = new Obus();
+                obus.set(void 0, s[0]);
+                obus.add(s[1], s[2]);
+                assert.deepEqual(obus, s[3]);
             });
         });
     });
@@ -248,6 +185,11 @@ describe('core/parser', function () {
                 {},
                 'a.b.c',
                 false
+            ],
+            [
+                {},
+                void 0,
+                false
             ]
         ];
 
@@ -255,9 +197,10 @@ describe('core/parser', function () {
 
         _.forEach(samples, function (s) {
             var title = util.format(header, s[0], s[1], s[2]);
-            var obus = new Obus(s[0]);
 
             it(title, function () {
+                var obus = new Obus();
+                obus.set(void 0, s[0]);
                 assert.deepEqual(obus.del(s[1]), s[2]);
             });
         });

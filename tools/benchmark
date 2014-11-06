@@ -8,39 +8,33 @@ var suite = new Suite();
 
 Benchmark.options.minSamples = 100;
 
+var obusGet = new Obus();
+obusGet.set(void 0, {a: {b: {c: {d: {}}}}});
+
 suite.add('Obus.get', function () {
-    var root = {a: {b: {c: {d: {}}}}};
-    Obus.get(root, 'a.b.c.d');
-    Obus.get(root, 'a.b.c.d.e');
-    Obus.get(root, 'a.b.c.d.e.f');
+    global.__test__ = obusGet.get('a.b.c.d');
+    global.__test__ = obusGet.get('a.b.c.d.e');
+    global.__test__ = obusGet.get('a.b.c.d.e.f');
 });
 
 suite.add('Obus.has', function () {
-    var root = {a: {b: {c: {d: {}}}}};
-    Obus.has(root, 'a.b.c.d.e');
-    Obus.has(root, 'a.b.c.d.e.f');
-    Obus.has(root, 'a.b.c.d.e.f.g');
+    global.__test__ = obusGet.has('a.b.c.d.e');
+    global.__test__ = obusGet.has('a.b.c.d.e.f');
+    global.__test__ = obusGet.has('a.b.c.d.e.f.g');
 });
 
 suite.add('Obus.set', function () {
-    var root = {};
-    Obus.set(root, 'a.b.c.x.e', 42);
-    Obus.set(root, 'a.b.c.y.e', 42);
-    Obus.set(root, 'a.b.c.z.e', 42);
+    var obus = new Obus();
+    global.__test__ = obus.set('a.b.c.x.e', 42);
+    global.__test__ = obus.set('a.b.c.y.e', 42);
+    global.__test__ = obus.set('a.b.c.z.e', 42);
 });
 
-suite.add('Obus.extend', function () {
-    var root = {_: {a: {b: {c: {}}}}};
-    Obus.extend(root, '_.a.b.c.x.e', 42);
-    Obus.extend(root, '_.a.b.c.y.e', 42);
-    Obus.extend(root, '_.a.b.c.z.e', 42);
-});
-
-suite.add('Obus.push', function () {
-    var root = {$: {a: {b: {c: {}}}}};
-    Obus.push(root, '$.a.b.c.x.e', 42);
-    Obus.push(root, '$.a.b.c.y.e', 42);
-    Obus.push(root, '$.a.b.c.z.e', 42);
+suite.add('Obus.add', function () {
+    var obus = new Obus();
+    global.__test__ = obus.add('_.a.b.c.x.e', 42);
+    global.__test__ = obus.add('_.a.b.c.y.e', 42);
+    global.__test__ = obus.add('_.a.b.c.z.e', 42);
 });
 
 suite.on('cycle', function (event) {
