@@ -8,33 +8,30 @@ var suite = new Suite();
 
 Benchmark.options.minSamples = 100;
 
-var obusGet = new Obus();
-obusGet.set(void 0, {a: {b: {c: {d: {}}}}});
-
 suite.add('Obus.get', function () {
-    global.__test__ = obusGet.get('a.b.c.d');
-    global.__test__ = obusGet.get('a.b.c.d.e');
-    global.__test__ = obusGet.get('a.b.c.d.e.f');
+    global.__test__ = Obus.get({a: {b: {c: {d: {}}}}}, 'a.b.c.d');
+    global.__test__ = Obus.get({a: {b: {c: {d: {}}}}}, 'a.b.c.d.e');
+    global.__test__ = Obus.get({a: {b: {c: {d: {}}}}}, 'a.b.c.d.e.f');
 });
 
 suite.add('Obus.has', function () {
-    global.__test__ = obusGet.has('a.b.c.d.e');
-    global.__test__ = obusGet.has('a.b.c.d.e.f');
-    global.__test__ = obusGet.has('a.b.c.d.e.f.g');
+    global.__test__ = Obus.has({a: {b: {c: {d: {}}}}}, 'a.b.c.d.e');
+    global.__test__ = Obus.has({a: {b: {c: {d: {}}}}}, 'a.b.c.d.e.f');
+    global.__test__ = Obus.has({a: {b: {c: {d: {}}}}}, 'a.b.c.d.e.f.g');
 });
 
 suite.add('Obus.set', function () {
-    var obus = new Obus();
-    global.__test__ = obus.set('a.b.c.x.e', 42);
-    global.__test__ = obus.set('a.b.c.y.e', 42);
-    global.__test__ = obus.set('a.b.c.z.e', 42);
+    var o = {};
+    global.__test__ = Obus.set(o, 'a.b.c.x.e', 42);
+    global.__test__ = Obus.set(o, 'a.b.c.y.e', 42);
+    global.__test__ = Obus.set(o, 'a.b.c.z.e', 42);
 });
 
 suite.add('Obus.add', function () {
-    var obus = new Obus();
-    global.__test__ = obus.add('_.a.b.c.x.e', 42);
-    global.__test__ = obus.add('_.a.b.c.y.e', 42);
-    global.__test__ = obus.add('_.a.b.c.z.e', 42);
+    var o = {};
+    global.__test__ = Obus.add(o, '_.a.b.c.x.e', 42);
+    global.__test__ = Obus.add(o, '_.a.b.c.y.e', 42);
+    global.__test__ = Obus.add(o, '_.a.b.c.z.e', 42);
 });
 
 suite.on('cycle', function (event) {

@@ -15,6 +15,15 @@ Obus.prototype = {
      * @memberOf {Obus}
      * @method
      *
+     * @constructs
+     * */
+    constructor: Obus,
+
+    /**
+     * @public
+     * @memberOf {Obus}
+     * @method
+     *
      * @param {String} path
      *
      * @returns {Boolean}
@@ -238,6 +247,84 @@ Obus.parse = function (path) {
     }
 
     return [];
+};
+
+/**
+ * @public
+ * @static
+ * @memberOf {Obus}
+ * @method
+ *
+ * @param {Object} self
+ * @param {String} path
+ * @param {*} [def]
+ *
+ * @returns {*}
+ * */
+Obus.get = function (self, path, def) {
+    return Obus.prototype.get.call(self, path, def);
+};
+
+/**
+ * @public
+ * @static
+ * @memberOf {Obus}
+ * @method
+ *
+ * @param {Object} self
+ * @param {String} path
+ * @param {*} data
+ *
+ * @returns {*}
+ * */
+Obus.set = function (self, path, data) {
+    return Obus.prototype.set.call(self, path, data);
+};
+
+/**
+ * @public
+ * @static
+ * @memberOf {Obus}
+ * @method
+ *
+ * @param {Object} self
+ * @param {String} path
+ * @param {*} data
+ *
+ * @returns {*}
+ * */
+Obus.add = function (self, path, data) {
+    return Obus.prototype.add.call(self, path, data);
+};
+
+/**
+ * @public
+ * @static
+ * @memberOf {Obus}
+ * @method
+ *
+ * @param {Object} self
+ * @param {String} path
+ *
+ * @returns {Boolean}
+ * */
+Obus.has = function (self, path) {
+    return Obus.prototype.has.call(self, path);
+};
+
+/**
+ * @public
+ * @static
+ * @memberOf {Obus}
+ * @method
+ *
+ * @param {Object} self
+ * @param {String} path
+ *
+ * @returns {Boolean}
+ * */
+Obus.del = function (self, path) {
+    return Obus.prototype.del.call(self, path);
 };
 
 module.exports = Obus;
