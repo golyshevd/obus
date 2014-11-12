@@ -12,7 +12,13 @@ describe('core/parser', function () {
     /*eslint max-nested-callbacks: 0*/
     var Obus = require('../core/obus');
 
-    describe('{Obus}.get', function () {
+    describe('Obus', function () {
+        it('Should be an instance of Obus', function () {
+            assert.ok(new Obus() instanceof Obus);
+        });
+    });
+
+    describe('Obus.get', function () {
         var samples = [
             [
                 {},
@@ -40,20 +46,18 @@ describe('core/parser', function () {
             ]
         ];
 
-        var header = 'new Obus(%j).get(%j, %j) should return %j';
+        var header = 'Obus.get(%j, %j, %j) should return %j';
 
         _.forEach(samples, function (s) {
             var title = util.format(header, s[0], s[1], s[2], s[3]);
 
             it(title, function () {
-                var obus = new Obus();
-                obus.set(void 0, s[0]);
-                assert.deepEqual(obus.get(s[1], s[2]), s[3]);
+                assert.deepEqual(Obus.get(s[0], s[1], s[2]), s[3]);
             });
         });
     });
 
-    describe('{Obus}.has', function () {
+    describe('Obus.has', function () {
         var samples = [
             [
                 {},
@@ -72,20 +76,18 @@ describe('core/parser', function () {
             ]
         ];
 
-        var header = 'new Obus(%j).has(%j) should return %j';
+        var header = 'Obus.has(%j, %j) should return %j';
 
         _.forEach(samples, function (s) {
             var title = util.format(header, s[0], s[1], s[2]);
 
             it(title, function () {
-                var obus = new Obus();
-                obus.set(void 0, s[0]);
-                assert.deepEqual(obus.has(s[1]), s[2]);
+                assert.deepEqual(Obus.has(s[0], s[1]), s[2]);
             });
         });
     });
 
-    describe('{Obus}.set', function () {
+    describe('Obus.set', function () {
         var samples = [
             [
                 {},
@@ -113,21 +115,19 @@ describe('core/parser', function () {
             ]
         ];
 
-        var header = 'new Obus(%j).set(%j, %j) should return %j';
+        var header = 'Obus.set(%j, %j, %j), %j';
 
         _.forEach(samples, function (s) {
             var title = util.format(header, s[0], s[1], s[2], s[3]);
 
             it(title, function () {
-                var obus = new Obus();
-                obus.set(void 0, s[0]);
-                obus.set(s[1], s[2]);
-                assert.deepEqual(obus, s[3]);
+                Obus.set(s[0], s[1], s[2]);
+                assert.deepEqual(s[0], s[3]);
             });
         });
     });
 
-    describe('{Obus}.add', function () {
+    describe('Obus.add', function () {
         var samples = [
             [
                 {},
@@ -155,21 +155,19 @@ describe('core/parser', function () {
             ]
         ];
 
-        var header = 'new Obus(%j).add(%j, %j) should return %j';
+        var header = 'Obus.add(%j, %j, %j), %j';
 
         _.forEach(samples, function (s) {
             var title = util.format(header, s[0], s[1], s[2], s[3]);
 
             it(title, function () {
-                var obus = new Obus();
-                obus.set(void 0, s[0]);
-                obus.add(s[1], s[2]);
-                assert.deepEqual(obus, s[3]);
+                Obus.add(s[0], s[1], s[2]);
+                assert.deepEqual(s[0], s[3]);
             });
         });
     });
 
-    describe('{Obus}.del', function () {
+    describe('Obus.del', function () {
         var samples = [
             [
                 {a: {b: 42}},
@@ -193,15 +191,13 @@ describe('core/parser', function () {
             ]
         ];
 
-        var header = 'new Obus(%j).del(%j) should return %j';
+        var header = 'Obus.del(%j, %j) should return %j';
 
         _.forEach(samples, function (s) {
             var title = util.format(header, s[0], s[1], s[2]);
 
             it(title, function () {
-                var obus = new Obus();
-                obus.set(void 0, s[0]);
-                assert.deepEqual(obus.del(s[1]), s[2]);
+                assert.deepEqual(Obus.del(s[0], s[1]), s[2]);
             });
         });
     });
