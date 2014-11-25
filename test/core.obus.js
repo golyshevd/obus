@@ -8,13 +8,90 @@ var util = require('util');
 /*eslint no-extend-native: 0*/
 Object.prototype.bug = 42;
 
-describe('core/parser', function () {
+describe('core/obus', function () {
     /*eslint max-nested-callbacks: 0*/
     var Obus = require('../core/obus');
 
     describe('Obus', function () {
         it('Should be an instance of Obus', function () {
             assert.ok(new Obus() instanceof Obus);
+        });
+    });
+
+    describe('Obus.parse', function () {
+        var parse = Obus.parse;
+        var samples = [
+            [
+                '',
+                []
+            ],
+            [
+                '       ',
+                []
+            ],
+            [
+                ' foo ',
+                ['foo']
+            ],
+            [
+                'foo',
+                ['foo']
+            ],
+            [
+                '.foo',
+                ['foo']
+            ],
+            [
+                '[42]',
+                [42]
+            ],
+            [
+                '  [  42  ]  ',
+                [42]
+            ],
+            [
+                '  [  "42"  ]  ',
+                ['42']
+            ],
+            [
+                '  [  \'42\'  ]  ',
+                ['42']
+            ],
+            [
+                '.foo[42]',
+                ['foo', 42]
+            ]
+        ];
+
+        _.forEach(samples, function (s) {
+            var shouldText = util.format('Should parse %j to %j', s[0], s[1]);
+
+            it(shouldText, function () {
+                assert.deepEqual(parse(s[0]), s[1]);
+            });
+        });
+
+        describe('parse errors', function () {
+            var errors = [
+                '.',
+                '[]',
+                '[\'"]',
+                '["\']',
+                '["foo"',
+                '[',
+                '1123',
+                'foo-bar'
+            ];
+
+            _.forEach(errors, function (s) {
+                var shouldText = util.format('Should throw SyntaxError on %j', s);
+
+                it(shouldText, function () {
+                    assert.throws(function () {
+                        return parse(s);
+                    });
+                });
+            });
         });
     });
 
