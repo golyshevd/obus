@@ -42,7 +42,8 @@ Obus.prototype = {
         for (i = 0, l = parts.length - 1; i < l; i += 1) {
             k = parts[i];
 
-            if (self && hasProperty.call(self, k) && self[k] && typeof self[k] === 'object') {
+            if (self && hasProperty.call(self, k) && self[k] &&
+                (typeof self[k] === 'object' || typeof self[k] === 'function')) {
                 self = self[k];
 
                 continue;
@@ -84,7 +85,8 @@ Obus.prototype = {
         for (i = 0, l = parts.length - 1; i < l; i += 1) {
             k = parts[i];
 
-            if (self && hasProperty.call(self, k) && self[k] && typeof self[k] === 'object') {
+            if (self && hasProperty.call(self, k) && self[k] &&
+                (typeof self[k] === 'object' || typeof self[k] === 'function')) {
                 self = self[k];
 
                 continue;
@@ -95,14 +97,16 @@ Obus.prototype = {
 
         k = parts[l];
 
-        if (hasProperty.call(self, k) && self[k] && typeof self[k] === 'object') {
+        if (hasProperty.call(self, k) && self[k] &&
+            (typeof self[k] === 'object' || typeof self[k] === 'function')) {
+            self = self[k];
             for (i in data) {
                 if (hasProperty.call(data, i)) {
-                    self[k][i] = data[i];
+                    self[i] = data[i];
                 }
             }
 
-            return self[k];
+            return self;
         }
 
         self[k] = data;
@@ -130,7 +134,7 @@ Obus.prototype = {
         for (i = 0, l = parts.length; i < l; i += 1) {
             k = parts[i];
 
-            if (self && typeof self === 'object' && hasProperty.call(self, k)) {
+            if (self && (typeof self === 'object' || typeof self === 'function') && hasProperty.call(self, k)) {
                 self = self[k];
 
                 continue;
@@ -166,7 +170,7 @@ Obus.prototype = {
         for (i = 0, l = parts.length; i < l; i += 1) {
             k = parts[i];
 
-            if (self && typeof self === 'object' && hasProperty.call(self, k)) {
+            if (self && (typeof self === 'object' || typeof self === 'function') && hasProperty.call(self, k)) {
                 self = self[k];
 
                 continue;
@@ -214,7 +218,8 @@ Obus.prototype = {
         for (i = 0, l = parts.length - 1; i < l; i += 1) {
             k = parts[i];
 
-            if (self && hasProperty.call(self, k) && self[k] && typeof self[k] === 'object') {
+            if (self && hasProperty.call(self, k) && self[k] &&
+                (typeof self[k] === 'object' || typeof self[k] === 'function')) {
                 self = self[k];
 
                 continue;
