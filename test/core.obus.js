@@ -18,6 +18,13 @@ describe('core/obus', function () {
         });
     });
 
+    function getF(k, v) {
+        function f() {}
+        f[k] = v;
+
+        return f;
+    }
+
     describe('Obus.parse', function () {
         var parse = Obus.parse;
         var samples = [
@@ -120,6 +127,12 @@ describe('core/obus', function () {
                 'a',
                 void 0,
                 42
+            ],
+            [
+                getF('foo', 'bar'),
+                'foo',
+                void 0,
+                'bar'
             ]
         ];
 
@@ -149,6 +162,11 @@ describe('core/obus', function () {
             [
                 {a: 42},
                 'a',
+                true
+            ],
+            [
+                getF('foo', 'bar'),
+                'foo',
                 true
             ]
         ];
@@ -202,6 +220,13 @@ describe('core/obus', function () {
                 assert.deepEqual(s[0], s[3]);
             });
         });
+
+        it('Should support function root', function () {
+            var obj = {foo: function () {}};
+            Obus.set(obj, 'foo.bar', 42);
+            assert.strictEqual(typeof obj.foo, 'function');
+            assert.strictEqual(obj.foo.bar, 42);
+        });
     });
 
     describe('Obus.add', function () {
@@ -242,6 +267,17 @@ describe('core/obus', function () {
                 assert.deepEqual(s[0], s[3]);
             });
         });
+
+        it('Should support function root', function () {
+            var obj = {foo: function () {}};
+            Obus.add(obj, 'foo.bar', 42);
+            assert.strictEqual(typeof obj.foo, 'function');
+            assert.strictEqual(obj.foo.bar, 42);
+            Obus.add(obj, 'foo', {
+                baz: 42
+            });
+            assert.strictEqual(obj.foo.baz, 42);
+        });
     });
 
     describe('Obus.del', function () {
@@ -276,6 +312,12 @@ describe('core/obus', function () {
             it(title, function () {
                 assert.deepEqual(Obus.del(s[0], s[1]), s[2]);
             });
+        });
+
+        it('Should support function root', function () {
+            var obj = {foo: getF('bar', 'baz')};
+            assert.ok(Obus.del(obj, 'foo.bar'), true);
+            assert.strictEqual(obj.foo.bar, void 0);
         });
     });
 
