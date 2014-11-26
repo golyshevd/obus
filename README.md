@@ -1,6 +1,6 @@
 #obus [![Build Status](https://travis-ci.org/fistlabs/obus.svg?branch=master)](https://travis-ci.org/fistlabs/obus)
 
-```obus``` is an object deep getter/setter supporting syntax escaping
+```obus``` is deep object accessor
 
 ##Usage
 ```js
@@ -72,5 +72,18 @@ obus.add('a', {c: 42});
 obus.valueOf(); // -> {a: {b: 42, c: 42}}
 ```
 
+##Also
+You can use brace accesors if the properties you want is not identifiers.
+```js
+var obus = new Obus();
+
+obus.set('foo.bar-baz', 42);  // error
+//  string literals
+obus.set('foo["bar-baz"]', 42); // done
+obus.set("foo['bar-baz']", 42); // done
+//  number literals
+obus.set('foo[42]', 146); //  done
+
+```
 ##License
 [MIT](LICENSE)
