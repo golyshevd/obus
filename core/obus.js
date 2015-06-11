@@ -341,7 +341,7 @@ Obus.del = function (self, path) {
 
 var R_SEARCH = /^\s*([^\s])([\s\S]*)/;
 var R_DEGRADE = /^\s*[^\s.\[]/;
-var R_IDENT = /^\s*([_a-z]\w*)([\s\S]*)$/i;
+var R_IDENT = /^\s*([_a-z$][\w$]*)([\s\S]*)$/i;
 var R_OPEN_ACCESS = /^\s*(?:(\d+)|(['"]))([\s\S]*)$/;
 var R_STRING1 = /^([^"]*)"([\s\S]*)$/;
 var R_STRING2 = /^([^']*)'([\s\S]*)$/;
@@ -445,7 +445,7 @@ function parse(s) {
                 break;
 
             default:
-                throw new SyntaxError(orig + '\n' + new Array(orig.length - s.length + 14).join(' ') + '^');
+                throw new SyntaxError(orig + '\n' + new Array(orig.length - s.length + 17).join(' ') + '^');
 
         }
     }

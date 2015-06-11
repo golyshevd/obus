@@ -67,6 +67,10 @@ describe('core/obus', function () {
             [
                 '.foo[42]',
                 ['foo', 42]
+            ],
+            [
+                '_$Identity',
+                ['_$Identity']
             ]
         ];
 
