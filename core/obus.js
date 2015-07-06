@@ -9,231 +9,81 @@ var parse = require('../parse');
  * */
 function Obus() {}
 
-Obus.prototype = {
+/**
+ * @public
+ * @memberOf {Obus}
+ * @method
+ *
+ * @constructs
+ * */
+Obus.prototype.constructor = Obus;
 
-    /**
-     * @public
-     * @memberOf {Obus}
-     * @method
-     *
-     * @constructs
-     * */
-    constructor: Obus,
+/**
+ * @public
+ * @memberOf {Obus}
+ * @method
+ *
+ * @param {String} path
+ * @param {*} data
+ *
+ * @returns {*}
+ * */
+Obus.prototype.add = function (path, data) {
+    return Obus.add(this, path, data);
+};
 
-    /**
-     * @public
-     * @memberOf {Obus}
-     * @method
-     *
-     * @param {String} path
-     *
-     * @returns {Boolean}
-     * */
-    del: function (path) {
-        var i;
-        var k;
-        var l;
-        var parts = Obus.parse(path);
-        var self = this;
+/**
+ * @public
+ * @memberOf {Obus}
+ * @method
+ *
+ * @param {String} path
+ *
+ * @returns {Boolean}
+ * */
+Obus.prototype.del = function (path) {
+    return Obus.del(this, path);
+};
 
-        if (!parts.length) {
-            return false;
-        }
+/**
+ * @public
+ * @memberOf {Obus}
+ * @method
+ *
+ * @param {String} path
+ * @param {*} [def]
+ *
+ * @returns {*}
+ * */
+Obus.prototype.get = function (path, def) {
+    return Obus.get(this, path, def);
+};
 
-        for (i = 0, l = parts.length - 1; i < l; i += 1) {
-            k = parts[i];
+/**
+ * @public
+ * @memberOf {Obus}
+ * @method
+ *
+ * @param {String} path
+ *
+ * @returns {Boolean}
+ * */
+Obus.prototype.has = function (path) {
+    return Obus.has(this, path);
+};
 
-            if (self && hasProperty.call(self, k) && self[k] &&
-                (typeof self[k] === 'object' || typeof self[k] === 'function')) {
-                self = self[k];
-
-                continue;
-            }
-
-            return false;
-        }
-
-        return delete self[parts[l]];
-    },
-
-    /**
-     * @public
-     * @memberOf {Obus}
-     * @method
-     *
-     * @param {String} path
-     * @param {*} data
-     *
-     * @returns {*}
-     * */
-    add: function (path, data) {
-        var i;
-        var k;
-        var l;
-        var parts = Obus.parse(path);
-        var self = this;
-
-        if (!parts.length) {
-            for (i in data) {
-                if (hasProperty.call(data, i)) {
-                    self[i] = data[i];
-                }
-            }
-
-            return self;
-        }
-
-        for (i = 0, l = parts.length - 1; i < l; i += 1) {
-            k = parts[i];
-
-            if (self && hasProperty.call(self, k) && self[k] &&
-                (typeof self[k] === 'object' || typeof self[k] === 'function')) {
-                self = self[k];
-
-                continue;
-            }
-
-            self = self[k] = {};
-        }
-
-        k = parts[l];
-
-        if (hasProperty.call(self, k) && self[k] &&
-            (typeof self[k] === 'object' || typeof self[k] === 'function')) {
-            self = self[k];
-            for (i in data) {
-                if (hasProperty.call(data, i)) {
-                    self[i] = data[i];
-                }
-            }
-
-            return self;
-        }
-
-        self[k] = data;
-
-        return self[k];
-    },
-
-    /**
-     * @public
-     * @memberOf {Obus}
-     * @method
-     *
-     * @param {String} path
-     * @param {*} [def]
-     *
-     * @returns {*}
-     * */
-    get: function (path, def) {
-        var i;
-        var k;
-        var l;
-        var parts = Obus.parse(path);
-        var self = this;
-
-        for (i = 0, l = parts.length; i < l; i += 1) {
-            k = parts[i];
-
-            if (self && (typeof self === 'object' || typeof self === 'function') && hasProperty.call(self, k)) {
-                self = self[k];
-
-                continue;
-            }
-
-            return def;
-        }
-
-        if (self === void 0) {
-
-            return def;
-        }
-
-        return self;
-    },
-
-    /**
-     * @public
-     * @memberOf {Obus}
-     * @method
-     *
-     * @param {String} path
-     *
-     * @returns {Boolean}
-     * */
-    has: function (path) {
-        var i;
-        var k;
-        var l;
-        var parts = Obus.parse(path);
-        var self = this;
-
-        for (i = 0, l = parts.length; i < l; i += 1) {
-            k = parts[i];
-
-            if (self && (typeof self === 'object' || typeof self === 'function') && hasProperty.call(self, k)) {
-                self = self[k];
-
-                continue;
-            }
-
-            return false;
-        }
-
-        return true;
-    },
-
-    /**
-     * @public
-     * @memberOf {Obus}
-     * @method
-     *
-     * @param {String} path
-     * @param {*} data
-     *
-     * @returns {*}
-     * */
-    set: function (path, data) {
-        var i;
-        var k;
-        var l;
-        var parts = Obus.parse(path);
-        var self = this;
-
-        if (!parts.length) {
-            for (i in self) {
-                if (hasProperty.call(self, i)) {
-                    delete self[i];
-                }
-            }
-
-            for (i in data) {
-                if (hasProperty.call(data, i)) {
-                    self[i] = data[i];
-                }
-            }
-
-            return self;
-        }
-
-        for (i = 0, l = parts.length - 1; i < l; i += 1) {
-            k = parts[i];
-
-            if (self && hasProperty.call(self, k) && self[k] &&
-                (typeof self[k] === 'object' || typeof self[k] === 'function')) {
-                self = self[k];
-
-                continue;
-            }
-
-            self = self[k] = {};
-        }
-
-        k = parts[l];
-        self[k] = data;
-
-        return self[k];
-    }
+/**
+ * @public
+ * @memberOf {Obus}
+ * @method
+ *
+ * @param {String} path
+ * @param {*} data
+ *
+ * @returns {*}
+ * */
+Obus.prototype.set = function (path, data) {
+    return Obus.set(this, path, data);
 };
 
 Obus.cache = {};
@@ -268,14 +118,133 @@ Obus.parse = function (path) {
  * @memberOf {Obus}
  * @method
  *
- * @param {Object} self
+ * @param {Object} obj
+ * @param {String} path
+ * @param {*} data
+ *
+ * @returns {*}
+ * */
+Obus.add = function (obj, path, data) {
+    var i;
+    var k;
+    var l;
+    var parts = Obus.parse(path);
+
+    if (!parts.length) {
+        for (i in data) {
+            if (hasProperty.call(data, i)) {
+                obj[i] = data[i];
+            }
+        }
+
+        return obj;
+    }
+
+    for (i = 0, l = parts.length - 1; i < l; i += 1) {
+        k = parts[i];
+
+        if (obj && hasProperty.call(obj, k) && obj[k] &&
+            (typeof obj[k] === 'object' || typeof obj[k] === 'function')) {
+            obj = obj[k];
+
+            continue;
+        }
+
+        obj = obj[k] = {};
+    }
+
+    k = parts[l];
+
+    if (hasProperty.call(obj, k) && obj[k] &&
+        (typeof obj[k] === 'object' || typeof obj[k] === 'function')) {
+        obj = obj[k];
+        for (i in data) {
+            if (hasProperty.call(data, i)) {
+                obj[i] = data[i];
+            }
+        }
+
+        return obj;
+    }
+
+    obj[k] = data;
+
+    return obj[k];
+};
+
+/**
+ * @public
+ * @static
+ * @memberOf {Obus}
+ * @method
+ *
+ * @param {Object} obj
+ * @param {String} path
+ *
+ * @returns {Boolean}
+ * */
+Obus.del = function (obj, path) {
+    var i;
+    var k;
+    var l;
+    var parts = Obus.parse(path);
+
+    if (!parts.length) {
+        return false;
+    }
+
+    for (i = 0, l = parts.length - 1; i < l; i += 1) {
+        k = parts[i];
+
+        if (obj && hasProperty.call(obj, k) && obj[k] &&
+            (typeof obj[k] === 'object' || typeof obj[k] === 'function')) {
+            obj = obj[k];
+
+            continue;
+        }
+
+        return false;
+    }
+
+    return delete obj[parts[l]];
+};
+
+/**
+ * @public
+ * @static
+ * @memberOf {Obus}
+ * @method
+ *
+ * @param {Object} obj
  * @param {String} path
  * @param {*} [def]
  *
  * @returns {*}
  * */
-Obus.get = function (self, path, def) {
-    return Obus.prototype.get.call(self, path, def);
+Obus.get = function (obj, path, def) {
+    var i;
+    var k;
+    var l;
+    var parts = Obus.parse(path);
+
+    for (i = 0, l = parts.length; i < l; i += 1) {
+        k = parts[i];
+
+        if (obj && (typeof obj === 'object' || typeof obj === 'function') && hasProperty.call(obj, k)) {
+            obj = obj[k];
+
+            continue;
+        }
+
+        return def;
+    }
+
+    if (obj === void 0) {
+
+        return def;
+    }
+
+    return obj;
 };
 
 /**
@@ -284,60 +253,83 @@ Obus.get = function (self, path, def) {
  * @memberOf {Obus}
  * @method
  *
- * @param {Object} self
+ * @param {Object} obj
+ * @param {String} path
+ *
+ * @returns {Boolean}
+ * */
+Obus.has = function (obj, path) {
+    var i;
+    var k;
+    var l;
+    var parts = Obus.parse(path);
+
+    for (i = 0, l = parts.length; i < l; i += 1) {
+        k = parts[i];
+
+        if (obj && (typeof obj === 'object' || typeof obj === 'function') && hasProperty.call(obj, k)) {
+            obj = obj[k];
+
+            continue;
+        }
+
+        return false;
+    }
+
+    return true;
+};
+
+/**
+ * @public
+ * @static
+ * @memberOf {Obus}
+ * @method
+ *
+ * @param {Object} obj
  * @param {String} path
  * @param {*} data
  *
  * @returns {*}
  * */
-Obus.set = function (self, path, data) {
-    return Obus.prototype.set.call(self, path, data);
-};
+Obus.set = function (obj, path, data) {
+    var i;
+    var k;
+    var l;
+    var parts = Obus.parse(path);
 
-/**
- * @public
- * @static
- * @memberOf {Obus}
- * @method
- *
- * @param {Object} self
- * @param {String} path
- * @param {*} data
- *
- * @returns {*}
- * */
-Obus.add = function (self, path, data) {
-    return Obus.prototype.add.call(self, path, data);
-};
+    if (!parts.length) {
+        for (i in obj) {
+            if (hasProperty.call(obj, i)) {
+                delete obj[i];
+            }
+        }
 
-/**
- * @public
- * @static
- * @memberOf {Obus}
- * @method
- *
- * @param {Object} self
- * @param {String} path
- *
- * @returns {Boolean}
- * */
-Obus.has = function (self, path) {
-    return Obus.prototype.has.call(self, path);
-};
+        for (i in data) {
+            if (hasProperty.call(data, i)) {
+                obj[i] = data[i];
+            }
+        }
 
-/**
- * @public
- * @static
- * @memberOf {Obus}
- * @method
- *
- * @param {Object} self
- * @param {String} path
- *
- * @returns {Boolean}
- * */
-Obus.del = function (self, path) {
-    return Obus.prototype.del.call(self, path);
+        return obj;
+    }
+
+    for (i = 0, l = parts.length - 1; i < l; i += 1) {
+        k = parts[i];
+
+        if (obj && hasProperty.call(obj, k) && obj[k] &&
+            (typeof obj[k] === 'object' || typeof obj[k] === 'function')) {
+            obj = obj[k];
+
+            continue;
+        }
+
+        obj = obj[k] = {};
+    }
+
+    k = parts[l];
+    obj[k] = data;
+
+    return obj[k];
 };
 
 module.exports = Obus;
