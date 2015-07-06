@@ -114,7 +114,7 @@ Obus.add = function (obj, path, data) {
     var i;
     var k;
     var l;
-    var parts = Obus.parse(path);
+    var parts = parse(path);
 
     if (!parts.length) {
         for (i in data) {
@@ -173,7 +173,7 @@ Obus.del = function (obj, path) {
     var i;
     var k;
     var l;
-    var parts = Obus.parse(path);
+    var parts = parse(path);
 
     if (!parts.length) {
         return false;
@@ -211,7 +211,7 @@ Obus.get = function (obj, path, def) {
     var i;
     var k;
     var l;
-    var parts = Obus.parse(path);
+    var parts = parse(path);
 
     for (i = 0, l = parts.length; i < l; i += 1) {
         k = parts[i];
@@ -248,7 +248,7 @@ Obus.has = function (obj, path) {
     var i;
     var k;
     var l;
-    var parts = Obus.parse(path);
+    var parts = parse(path);
 
     for (i = 0, l = parts.length; i < l; i += 1) {
         k = parts[i];
@@ -281,7 +281,7 @@ Obus.set = function (obj, path, data) {
     var i;
     var k;
     var l;
-    var parts = Obus.parse(path);
+    var parts = parse(path);
 
     if (!parts.length) {
         for (i in obj) {
