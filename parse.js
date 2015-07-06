@@ -8,7 +8,9 @@ var R_STRING1 = /^([^"]*)"([\s\S]*)$/;
 var R_STRING2 = /^([^']*)'([\s\S]*)$/;
 var R_CLOSE_ACCESS = /^\s*]([\s\S]*)$/;
 
-function parse(s) {
+var hasProperty = Object.prototype.hasOwnProperty;
+
+function _parse(s) {
     /*eslint  default-case: 0, complexity: 0*/
     var orig = s;
     var m;
@@ -113,5 +115,21 @@ function parse(s) {
 
     return parts;
 }
+
+function parse (path) {
+    var parts = [];
+
+    if (typeof path === 'string') {
+        if (!hasProperty.call(parse.cache, path)) {
+            parse.cache[path] = _parse(path);
+        }
+
+        parts = parse.cache[path];
+    }
+
+    return parts;
+}
+
+parse.cache = {};
 
 module.exports = parse;

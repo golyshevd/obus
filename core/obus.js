@@ -86,8 +86,6 @@ Obus.prototype.set = function (path, data) {
     return Obus.set(this, path, data);
 };
 
-Obus.cache = {};
-
 /**
  * @public
  * @static
@@ -98,19 +96,7 @@ Obus.cache = {};
  *
  * @returns {Array}
  * */
-Obus.parse = function (path) {
-    var parts = [];
-
-    if (typeof path === 'string') {
-        if (!hasProperty.call(Obus.cache, path)) {
-            Obus.cache[path] = parse(path);
-        }
-
-        parts = Obus.cache[path];
-    }
-
-    return parts;
-};
+Obus.parse = require('../parse');
 
 /**
  * @public
