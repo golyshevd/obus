@@ -10,7 +10,7 @@ Object.prototype.bug = 42;
 
 describe('core/obus', function () {
     /*eslint max-nested-callbacks: 0*/
-    var Obus = require('../core/obus');
+    var Obus = require('../obus');
 
     describe('Obus', function () {
         it('Should be an instance of Obus', function () {

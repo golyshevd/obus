@@ -92,7 +92,7 @@ Obus.prototype.set = function (path, data) {
  *
  * @returns {Array}
  * */
-Obus.parse = require('../parse');
+Obus.parse = require('./parse');
 
 /**
  * @public
@@ -106,7 +106,7 @@ Obus.parse = require('../parse');
  *
  * @returns {*}
  * */
-Obus.add = require('../add');
+Obus.add = require('./add');
 
 /**
  * @public
@@ -119,7 +119,7 @@ Obus.add = require('../add');
  *
  * @returns {Boolean}
  * */
-Obus.del = require('../del');
+Obus.del = require('./del');
 
 /**
  * @public
@@ -133,7 +133,7 @@ Obus.del = require('../del');
  *
  * @returns {*}
  * */
-Obus.get = require('../get');
+Obus.get = require('./get');
 
 /**
  * @public
@@ -146,7 +146,7 @@ Obus.get = require('../get');
  *
  * @returns {Boolean}
  * */
-Obus.has = require('../has');
+Obus.has = require('./has');
 
 /**
  * @public
@@ -160,6 +160,6 @@ Obus.has = require('../has');
  *
  * @returns {*}
  * */
-Obus.set = require('../set');
+Obus.set = require('./set');
 
 module.exports = Obus;
