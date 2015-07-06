@@ -1,8 +1,4 @@
-/*eslint complexity: 0*/
 'use strict';
-
-var hasProperty = Object.prototype.hasOwnProperty;
-var parse = require('../parse');
 
 /**
  * @class Obus
@@ -110,53 +106,7 @@ Obus.parse = require('../parse');
  *
  * @returns {*}
  * */
-Obus.add = function (obj, path, data) {
-    var i;
-    var k;
-    var l;
-    var parts = parse(path);
-
-    if (!parts.length) {
-        for (i in data) {
-            if (hasProperty.call(data, i)) {
-                obj[i] = data[i];
-            }
-        }
-
-        return obj;
-    }
-
-    for (i = 0, l = parts.length - 1; i < l; i += 1) {
-        k = parts[i];
-
-        if (obj && hasProperty.call(obj, k) && obj[k] &&
-            (typeof obj[k] === 'object' || typeof obj[k] === 'function')) {
-            obj = obj[k];
-
-            continue;
-        }
-
-        obj = obj[k] = {};
-    }
-
-    k = parts[l];
-
-    if (hasProperty.call(obj, k) && obj[k] &&
-        (typeof obj[k] === 'object' || typeof obj[k] === 'function')) {
-        obj = obj[k];
-        for (i in data) {
-            if (hasProperty.call(data, i)) {
-                obj[i] = data[i];
-            }
-        }
-
-        return obj;
-    }
-
-    obj[k] = data;
-
-    return obj[k];
-};
+Obus.add = require('../add');
 
 /**
  * @public
@@ -169,31 +119,7 @@ Obus.add = function (obj, path, data) {
  *
  * @returns {Boolean}
  * */
-Obus.del = function (obj, path) {
-    var i;
-    var k;
-    var l;
-    var parts = parse(path);
-
-    if (!parts.length) {
-        return false;
-    }
-
-    for (i = 0, l = parts.length - 1; i < l; i += 1) {
-        k = parts[i];
-
-        if (obj && hasProperty.call(obj, k) && obj[k] &&
-            (typeof obj[k] === 'object' || typeof obj[k] === 'function')) {
-            obj = obj[k];
-
-            continue;
-        }
-
-        return false;
-    }
-
-    return delete obj[parts[l]];
-};
+Obus.del = require('../del');
 
 /**
  * @public
@@ -207,31 +133,7 @@ Obus.del = function (obj, path) {
  *
  * @returns {*}
  * */
-Obus.get = function (obj, path, def) {
-    var i;
-    var k;
-    var l;
-    var parts = parse(path);
-
-    for (i = 0, l = parts.length; i < l; i += 1) {
-        k = parts[i];
-
-        if (obj && (typeof obj === 'object' || typeof obj === 'function') && hasProperty.call(obj, k)) {
-            obj = obj[k];
-
-            continue;
-        }
-
-        return def;
-    }
-
-    if (obj === void 0) {
-
-        return def;
-    }
-
-    return obj;
-};
+Obus.get = require('../get');
 
 /**
  * @public
@@ -244,26 +146,7 @@ Obus.get = function (obj, path, def) {
  *
  * @returns {Boolean}
  * */
-Obus.has = function (obj, path) {
-    var i;
-    var k;
-    var l;
-    var parts = parse(path);
-
-    for (i = 0, l = parts.length; i < l; i += 1) {
-        k = parts[i];
-
-        if (obj && (typeof obj === 'object' || typeof obj === 'function') && hasProperty.call(obj, k)) {
-            obj = obj[k];
-
-            continue;
-        }
-
-        return false;
-    }
-
-    return true;
-};
+Obus.has = require('../has');
 
 /**
  * @public
@@ -277,45 +160,6 @@ Obus.has = function (obj, path) {
  *
  * @returns {*}
  * */
-Obus.set = function (obj, path, data) {
-    var i;
-    var k;
-    var l;
-    var parts = parse(path);
-
-    if (!parts.length) {
-        for (i in obj) {
-            if (hasProperty.call(obj, i)) {
-                delete obj[i];
-            }
-        }
-
-        for (i in data) {
-            if (hasProperty.call(data, i)) {
-                obj[i] = data[i];
-            }
-        }
-
-        return obj;
-    }
-
-    for (i = 0, l = parts.length - 1; i < l; i += 1) {
-        k = parts[i];
-
-        if (obj && hasProperty.call(obj, k) && obj[k] &&
-            (typeof obj[k] === 'object' || typeof obj[k] === 'function')) {
-            obj = obj[k];
-
-            continue;
-        }
-
-        obj = obj[k] = {};
-    }
-
-    k = parts[l];
-    obj[k] = data;
-
-    return obj[k];
-};
+Obus.set = require('../set');
 
 module.exports = Obus;

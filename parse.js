@@ -116,7 +116,10 @@ function _parse(s) {
     return parts;
 }
 
-function parse (path) {
+/**
+ * @returns {Array}
+ * */
+function parse(path) {
     var parts = [];
 
     if (typeof path === 'string') {
