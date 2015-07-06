@@ -2,8 +2,6 @@
 
 var gulpMocha = require('gulp-mocha');
 var gulpIstanbul = require('gulp-istanbul');
-var istanbulPipe = gulpIstanbul();
-var writePipe = gulpIstanbul.writeReports();
 var mochaPipe = gulpMocha({
     ui: 'bdd',
     reporter: 'spec',
@@ -19,14 +17,13 @@ function runMocha(done) {
 function runCover(done) {
     var self = this;
 
-    this.src([
-        'core/**/*.js'
-    ])
-        .pipe(istanbulPipe)
-        .on('finish', function () {
+    this.src(['*.js']).
+        pipe(gulpIstanbul()).
+        pipe(gulpIstanbul.hookRequire()).
+        on('finish', function () {
             self.src('test/*.js')
                 .pipe(mochaPipe)
-                .pipe(writePipe)
+                .pipe(gulpIstanbul.writeReports())
                 .on('end', done);
         });
 }

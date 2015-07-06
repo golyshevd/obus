@@ -1,6 +1,6 @@
 'use strict';
 
-var _ = require('lodash-node');
+var _ = require('lodash');
 var gulp = require('gulp');
 var glob = require('glob');
 var path = require('path');

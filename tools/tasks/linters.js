@@ -3,7 +3,7 @@
 var EslintConfig = require('eslint/lib/config');
 var gulpJscs = require('gulp-jscs');
 
-var _ = require('lodash-node');
+var _ = require('lodash');
 var eslintLinter = require('eslint').linter;
 var eslintStylishFormatter = require('eslint/lib/formatters/stylish');
 var glob = require('glob');
@@ -53,11 +53,11 @@ function eslintPromise(paths, configPath) {
 
 function runEslint(done) {
     /*eslint no-console: 0*/
-    var paths = _.reduce(linterPaths, function (paths, globPattern) {
+    var allPaths = _.reduce(linterPaths, function (paths, globPattern) {
         return paths.concat(glob.sync(globPattern));
     }, []);
 
-    eslintPromise(paths, '.eslintrc')
+    eslintPromise(allPaths, '.eslintrc')
         .done(function (results) {
             var message;
 
