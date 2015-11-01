@@ -162,14 +162,36 @@ Obus.has = require('./has');
  * */
 Obus.set = require('./set');
 
+/**
+ * @public
+ * @static
+ * @memberOf {Obus}
+ * @method
+ *
+ * @param {Object} obj
+ *
+ * @returns {Boolean}
+ * */
+Obus.obj = require('./_obj');
+
+/**
+ * @public
+ * @static
+ * @memberOf {Obus}
+ * @method
+ *
+ * @param {Object} obj
+ * @param {String} k
+ *
+ * @returns {Boolean}
+ * */
+Obus.own = require('./_own');
+
 Obus._parse = require('./_parse');
 Obus._add = require('./_add');
 Obus._del = require('./_del');
 Obus._get = require('./_get');
 Obus._has = require('./_has');
 Obus._set = require('./_set');
-
-Obus._own = require('./_own');
-Obus._obj = require('./_obj');
 
 module.exports = Obus;
