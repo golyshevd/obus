@@ -23,69 +23,73 @@ suite.add('Obus.parse', function () {
 });
 
 suite.add('Obus._add', function () {
-    var o = {};
-    Obus._add(o, ['_', 'a', 'b', 'c', 'x', 'e'], 42);
-    Obus._add(o, ['_', 'a', 'b', 'c', 'y', 'e'], 42);
-    Obus._add(o, ['_', 'a', 'b', 'c', 'z', 'e'], 42);
+    var obj = {};
+    Obus._add(obj, ['_', 'a', 'b', 'c', 'x', 'e'], 42);
+    Obus._add(obj, ['_', 'a', 'b', 'c', 'y', 'e'], 42);
+    Obus._add(obj, ['_', 'a', 'b', 'c', 'z', 'e'], 42);
 });
 
 suite.add('Obus.add', function () {
-    var o = {};
-    Obus.add(o, '_.a.b.c.x.e', 42);
-    Obus.add(o, '_.a.b.c.y.e', 42);
-    Obus.add(o, '_.a.b.c.z.e', 42);
+    var obj = {};
+    Obus.add(obj, '_.a.b.c.x.e', 42);
+    Obus.add(obj, '_.a.b.c.y.e', 42);
+    Obus.add(obj, '_.a.b.c.z.e', 42);
 });
 
 suite.add('Obus._del', function () {
-    var o = {_: {a: {b: {}}}};
-    Obus.del(o, ['_', 'a', 'b' ,'c']);
-    Obus.del(o, ['_', 'a', 'b']);
-    Obus.del(o, ['_', 'a']);
+    var obj = {_: {a: {b: {}}}};
+    Obus.del(obj, ['_', 'a', 'b' ,'c']);
+    Obus.del(obj, ['_', 'a', 'b']);
+    Obus.del(obj, ['_', 'a']);
 });
 
 suite.add('Obus.del', function () {
-    var o = {_: {a: {b: {}}}};
-    Obus.del(o, '_.a.b.c');
-    Obus.del(o, '_.a.b');
-    Obus.del(o, '_.a');
+    var obj = {_: {a: {b: {}}}};
+    Obus.del(obj, '_.a.b.c');
+    Obus.del(obj, '_.a.b');
+    Obus.del(obj, '_.a');
 });
 
 suite.add('Obus._get', function () {
-    Obus._get({a: {b: {c: {d: {}}}}}, ['a', 'b', 'c', 'd'], 4);
-    Obus._get({a: {b: {c: {d: {}}}}}, ['a', 'b', 'c', 'd', 'e'], 5);
-    Obus._get({a: {b: {c: {d: {}}}}}, ['a', 'b', 'c', 'd', 'e', 'f'], 6);
+    var obj = {a: {b: {c: {d: {}}}}};
+    Obus._get(obj, ['a', 'b', 'c', 'd'], 4);
+    Obus._get(obj, ['a', 'b', 'c', 'd', 'e'], 5);
+    Obus._get(obj, ['a', 'b', 'c', 'd', 'e', 'f'], 6);
 });
 
 suite.add('Obus.get', function () {
-    Obus.get({a: {b: {c: {d: {}}}}}, 'a.b.c.d');
-    Obus.get({a: {b: {c: {d: {}}}}}, 'a.b.c.d.e');
-    Obus.get({a: {b: {c: {d: {}}}}}, 'a.b.c.d.e.f');
+    var obj = {a: {b: {c: {d: {}}}}};
+    Obus.get(obj, 'a.b.c.d');
+    Obus.get(obj, 'a.b.c.d.e');
+    Obus.get(obj, 'a.b.c.d.e.f');
 });
 
 suite.add('Obus._has', function () {
-    Obus._has({a: {b: {c: {d: {}}}}}, ['a', 'b', 'c', 'd', 'e']);
-    Obus._has({a: {b: {c: {d: {}}}}}, ['a', 'b', 'c', 'd', 'e', 'f']);
-    Obus._has({a: {b: {c: {d: {}}}}}, ['a', 'b', 'c', 'd', 'e', 'f', 'g']);
+    var obj = {a: {b: {c: {d: {}}}}};
+    Obus._has(obj, ['a', 'b', 'c', 'd', 'e']);
+    Obus._has(obj, ['a', 'b', 'c', 'd', 'e', 'f']);
+    Obus._has(obj, ['a', 'b', 'c', 'd', 'e', 'f', 'g']);
 });
 
 suite.add('Obus.has', function () {
-    Obus.has({a: {b: {c: {d: {}}}}}, 'a.b.c.d.e');
-    Obus.has({a: {b: {c: {d: {}}}}}, 'a.b.c.d.e.f');
-    Obus.has({a: {b: {c: {d: {}}}}}, 'a.b.c.d.e.f.g');
+    var obj = {a: {b: {c: {d: {}}}}};
+    Obus.has(obj, 'a.b.c.d.e');
+    Obus.has(obj, 'a.b.c.d.e.f');
+    Obus.has(obj, 'a.b.c.d.e.f.g');
 });
 
 suite.add('Obus._set', function () {
-    var o = {};
-    Obus._set(o, ['a', 'b', 'c', 'x', 'e'], 42);
-    Obus._set(o, ['a', 'b', 'c', 'y', 'e'], 42);
-    Obus._set(o, ['a', 'b', 'c', 'z', 'e'], 42);
+    var obj = {};
+    Obus._set(obj, ['a', 'b', 'c', 'x', 'e'], 42);
+    Obus._set(obj, ['a', 'b', 'c', 'y', 'e'], 42);
+    Obus._set(obj, ['a', 'b', 'c', 'z', 'e'], 42);
 });
 
 suite.add('Obus.set', function () {
-    var o = {};
-    Obus.set(o, 'a.b.c.x.e', 42);
-    Obus.set(o, 'a.b.c.y.e', 42);
-    Obus.set(o, 'a.b.c.z.e', 42);
+    var obj = {};
+    Obus.set(obj, 'a.b.c.x.e', 42);
+    Obus.set(obj, 'a.b.c.y.e', 42);
+    Obus.set(obj, 'a.b.c.z.e', 42);
 });
 
 suite.on('cycle', function (event) {
