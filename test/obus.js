@@ -304,7 +304,12 @@ describe('core/obus', function () {
             [
                 {},
                 void 0,
-                false
+                true
+            ],
+            [
+                {x: 42},
+                void 0,
+                true
             ]
         ];
 
@@ -329,16 +334,15 @@ describe('core/obus', function () {
         var o = new Obus();
         o.add('foo.bar.baz', 42);
         assert.strictEqual(o.foo.bar.baz, 42);
+
         assert.ok(o.del('foo.bar.baz'));
-        assert.ok(!o.del(o.foo.bar.baz));
-        assert.ok(!_.has(o.foo.bar, 'baz'));
+        assert.ok(!o.has('foo.bar.baz'));
         assert.strictEqual(o.get('foo.bar'), o.foo.bar);
         var fooBar = o.foo.bar;
         o.set('foo.bar', {});
         assert.ok(o.foo.bar);
         assert.notStrictEqual(o.foo.bar, fooBar);
         assert.ok(o.has('foo.bar'));
-        assert.ok(!o.has('foo.bar.baz'));
     });
 
 });

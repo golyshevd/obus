@@ -1,27 +1,10 @@
 'use strict';
 
-var hasProperty = Object.prototype.hasOwnProperty;
 var parse = require('./parse');
+var _has = require('./_has');
 
 function has(obj, path) {
-    var i;
-    var k;
-    var l;
-    var parts = parse(path);
-
-    for (i = 0, l = parts.length; i < l; i += 1) {
-        k = parts[i];
-
-        if (obj && (typeof obj === 'object' || typeof obj === 'function') && hasProperty.call(obj, k)) {
-            obj = obj[k];
-
-            continue;
-        }
-
-        return false;
-    }
-
-    return true;
+    return _has(obj, parse(path));
 }
 
 module.exports = has;

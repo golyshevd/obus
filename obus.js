@@ -162,4 +162,14 @@ Obus.has = require('./has');
  * */
 Obus.set = require('./set');
 
+Obus._parse = require('./_parse');
+Obus._add = require('./_add');
+Obus._del = require('./_del');
+Obus._get = require('./_get');
+Obus._has = require('./_has');
+Obus._set = require('./_set');
+
+Obus._own = require('./_own');
+Obus._obj = require('./_obj');
+
 module.exports = Obus;
