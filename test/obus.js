@@ -8,7 +8,7 @@ var util = require('util');
 /*eslint no-extend-native: 0*/
 Object.prototype.bug = 42;
 
-describe('core/obus', function () {
+describe('obus', function () {
     /*eslint max-nested-callbacks: 0*/
     var Obus = require('../obus');
 
@@ -71,6 +71,14 @@ describe('core/obus', function () {
             [
                 '_$Identity',
                 ['_$Identity']
+            ],
+            [
+                'foo["\'"]',
+                ['foo', '\'']
+            ],
+            [
+                '["\\""]',
+                ['"']
             ]
         ];
 
@@ -345,4 +353,18 @@ describe('core/obus', function () {
         assert.ok(o.has('foo.bar'));
     });
 
+    describe('Obus.format', function () {
+        var samples = [
+            '.foo.bar',
+            '[1][2].foo',
+            '[\'foo-bar\']',
+            '[\'foo\\\'-bar\']'
+        ];
+
+        samples.forEach(function (s) {
+            it(util.format('Should format %j to %s', Obus.parse(s), s), function () {
+                assert.strictEqual(Obus.format(Obus.parse(s)), s);
+            });
+        });
+    });
 });

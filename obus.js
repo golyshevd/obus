@@ -127,6 +127,18 @@ Obus.del = require('./del');
  * @memberOf {Obus}
  * @method
  *
+ * @param {Array} parts
+ *
+ * @returns {String}
+ * */
+Obus.format = require('./format');
+
+/**
+ * @public
+ * @static
+ * @memberOf {Obus}
+ * @method
+ *
  * @param {Object} obj
  * @param {String} path
  * @param {*} [def]

@@ -7,7 +7,8 @@
     "Golyshev Dmitrii <golyshev.dmitry@yandex.ru>"
   ],
   "dependencies": {
-    "lru-dict": "0.0.1"
+    "lru-dict": "0.0.1",
+    "to-single-quotes": "~2.0.0"
   },
   "description": "deep access to object properties",
   "devDependencies": {

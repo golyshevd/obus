@@ -4,9 +4,13 @@ var R_SEARCH = /^\s*([^\s])([\s\S]*)/;
 var R_DEGRADE = /^\s*[^\s.\[]/;
 var R_IDENT = /^\s*([_a-z$][\w$]*)([\s\S]*)$/i;
 var R_OPEN_ACCESS = /^\s*(?:(\d+)|(['"]))([\s\S]*)$/;
-var R_STRING1 = /^([^"]*)"([\s\S]*)$/;
-var R_STRING2 = /^([^']*)'([\s\S]*)$/;
+var R_STRING1 = /^((?:\\[\s\S]|[^"])*)"([\s\S]*)$/;
+var R_STRING2 = /^((?:\\[\s\S]|[^'])*)'([\s\S]*)$/;
 var R_CLOSE_ACCESS = /^\s*]([\s\S]*)$/;
+
+function unescape(s) {
+    return s.replace(/\\([\s\S])/g, '$1');
+}
 
 function _parse(s) {
     /*eslint  default-case: 0, complexity: 0*/
@@ -77,7 +81,7 @@ function _parse(s) {
                 }
 
                 s = m[2];
-                parts[parts.length] = m[1];
+                parts[parts.length] = unescape(m[1]);
                 state = ']';
                 break;
 
@@ -90,7 +94,7 @@ function _parse(s) {
                 }
 
                 s = m[2];
-                parts[parts.length] = m[1];
+                parts[parts.length] = unescape(m[1]);
                 state = ']';
                 break;
 
