@@ -1,7 +1,7 @@
 {
   "author": "Golyshev Dmitrii <golyshev.dmitry@yandex.ru>",
   "bugs": {
-    "url": "https://github.com/fistlabs/obus/issues"
+    "url": "https://github.com/golyshevd/obus/issues"
   },
   "contributors": [
     "Golyshev Dmitrii <golyshev.dmitry@yandex.ru>"
@@ -30,7 +30,7 @@
   "name": "obus",
   "repository": {
     "type": "git",
-    "url": "git://github.com/fistlabs/obus.git"
+    "url": "git://github.com/golyshevd/obus.git"
   },
   "version": "2.1.0"
 }
