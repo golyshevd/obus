@@ -1,18 +1,27 @@
 #!/usr/bin/env node
 'use strict';
 
+var Obus = require('../');
+
+var _add = require('../_add');
+var _del = require('../_del');
+var _get = require('../_get');
+var _has = require('../_has');
+var _set = require('../_set');
+var _parse = require('../_parse');
+
 var Benchmark = require('benchmark').Benchmark;
 var Suite = Benchmark.Suite;
-var Obus = require('../');
+
 var suite = new Suite();
 
 Benchmark.options.minSamples = 100;
 
-suite.add('Obus._parse', function () {
-    Obus._parse('a.b.c.d');
-    Obus._parse('a["b"].c.d');
-    Obus._parse('a["b"][1].d');
-    Obus._parse('a["b"][1].d[1][\'2\']');
+suite.add('obus/_parse', function () {
+    _parse('a.b.c.d');
+    _parse('a["b"].c.d');
+    _parse('a["b"][1].d');
+    _parse('a["b"][1].d[1][\'2\']');
 });
 
 suite.add('Obus.parse', function () {
@@ -22,11 +31,11 @@ suite.add('Obus.parse', function () {
     Obus.parse('a["b"][1].d[1][\'2\']');
 });
 
-suite.add('Obus._add', function () {
+suite.add('obus/_add', function () {
     var obj = {};
-    Obus._add(obj, ['_', 'a', 'b', 'c', 'x', 'e'], 42);
-    Obus._add(obj, ['_', 'a', 'b', 'c', 'y', 'e'], 42);
-    Obus._add(obj, ['_', 'a', 'b', 'c', 'z', 'e'], 42);
+    _add(obj, ['_', 'a', 'b', 'c', 'x', 'e'], 42);
+    _add(obj, ['_', 'a', 'b', 'c', 'y', 'e'], 42);
+    _add(obj, ['_', 'a', 'b', 'c', 'z', 'e'], 42);
 });
 
 suite.add('Obus.add', function () {
@@ -36,11 +45,11 @@ suite.add('Obus.add', function () {
     Obus.add(obj, '_.a.b.c.z.e', 42);
 });
 
-suite.add('Obus._del', function () {
+suite.add('obus/_del', function () {
     var obj = {_: {a: {b: {}}}};
-    Obus.del(obj, ['_', 'a', 'b' ,'c']);
-    Obus.del(obj, ['_', 'a', 'b']);
-    Obus.del(obj, ['_', 'a']);
+    _del(obj, ['_', 'a', 'b' ,'c']);
+    _del(obj, ['_', 'a', 'b']);
+    _del(obj, ['_', 'a']);
 });
 
 suite.add('Obus.del', function () {
@@ -50,11 +59,11 @@ suite.add('Obus.del', function () {
     Obus.del(obj, '_.a');
 });
 
-suite.add('Obus._get', function () {
+suite.add('obus/_get', function () {
     var obj = {a: {b: {c: {d: {}}}}};
-    Obus._get(obj, ['a', 'b', 'c', 'd'], 4);
-    Obus._get(obj, ['a', 'b', 'c', 'd', 'e'], 5);
-    Obus._get(obj, ['a', 'b', 'c', 'd', 'e', 'f'], 6);
+    _get(obj, ['a', 'b', 'c', 'd'], 4);
+    _get(obj, ['a', 'b', 'c', 'd', 'e'], 5);
+    _get(obj, ['a', 'b', 'c', 'd', 'e', 'f'], 6);
 });
 
 suite.add('Obus.get', function () {
@@ -64,11 +73,11 @@ suite.add('Obus.get', function () {
     Obus.get(obj, 'a.b.c.d.e.f');
 });
 
-suite.add('Obus._has', function () {
+suite.add('obus/_has', function () {
     var obj = {a: {b: {c: {d: {}}}}};
-    Obus._has(obj, ['a', 'b', 'c', 'd', 'e']);
-    Obus._has(obj, ['a', 'b', 'c', 'd', 'e', 'f']);
-    Obus._has(obj, ['a', 'b', 'c', 'd', 'e', 'f', 'g']);
+    _has(obj, ['a', 'b', 'c', 'd', 'e']);
+    _has(obj, ['a', 'b', 'c', 'd', 'e', 'f']);
+    _has(obj, ['a', 'b', 'c', 'd', 'e', 'f', 'g']);
 });
 
 suite.add('Obus.has', function () {
@@ -78,11 +87,11 @@ suite.add('Obus.has', function () {
     Obus.has(obj, 'a.b.c.d.e.f.g');
 });
 
-suite.add('Obus._set', function () {
+suite.add('obus/_set', function () {
     var obj = {};
-    Obus._set(obj, ['a', 'b', 'c', 'x', 'e'], 42);
-    Obus._set(obj, ['a', 'b', 'c', 'y', 'e'], 42);
-    Obus._set(obj, ['a', 'b', 'c', 'z', 'e'], 42);
+    _set(obj, ['a', 'b', 'c', 'x', 'e'], 42);
+    _set(obj, ['a', 'b', 'c', 'y', 'e'], 42);
+    _set(obj, ['a', 'b', 'c', 'z', 'e'], 42);
 });
 
 suite.add('Obus.set', function () {
