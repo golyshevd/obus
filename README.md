@@ -77,11 +77,9 @@ You can use brace accessors if the properties you want is not identifiers.
 ```js
 var obus = new Obus();
 obus.set('foo.bar-baz', 42);  // error
-// string literals
+// Obus supports string literals
 obus.set('foo["bar-baz"]', 42); // done
 obus.set("foo['bar-baz']", 42); // done
-// number literals
-obus.set('foo[42]', 146); //  done
 ```
 
 ---------

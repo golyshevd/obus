@@ -1,26 +1,25 @@
 'use strict';
 
-var R_SEARCH = /^\s*([^\s])([\s\S]*)/;
 var R_DEGRADE = /^\s*[^\s.\[]/;
+var R_SEARCH = /^\s*([^\s])([\s\S]*)$/;
 var R_IDENT = /^\s*([_a-z$][\w$]*)([\s\S]*)$/i;
-var R_OPEN_ACCESS = /^\s*(?:(\d+)|(['"]))([\s\S]*)$/;
+var R_OPEN_ACCESS = /^\s*(['"])([\s\S]*)$/;
 var R_STRING1 = /^((?:\\[\s\S]|[^"])*)"([\s\S]*)$/;
+var R_ESCAPED = /\\([\s\S])/g;
 var R_STRING2 = /^((?:\\[\s\S]|[^'])*)'([\s\S]*)$/;
 var R_CLOSE_ACCESS = /^\s*]([\s\S]*)$/;
-
 function unescape(s) {
-    return s.replace(/\\([\s\S])/g, '$1');
+    return s.replace(R_ESCAPED, '$1');
 }
 
-function _parse(s) {
-    /*eslint  default-case: 0, complexity: 0*/
-    var orig = s;
+function _parse(str) {
+    /*eslint complexity: 0*/
+    var s = str;
     var m;
     var state = '?';
     var parts = [];
 
     if (R_DEGRADE.test(s)) {
-        // TODO deprecate
         state = '.';
     }
 
@@ -31,87 +30,80 @@ function _parse(s) {
             case '?':
                 m = R_SEARCH.exec(s);
 
-                if (!m) {
-                    state = 'EOF';
+                if (m) {
+                    s = m[2];
+                    state = m[1];
                     break;
                 }
 
-                s = m[2];
-                state = m[1];
+                state = 'EOF';
                 break;
 
             case '.':
                 m = R_IDENT.exec(s);
 
-                if (!m) {
-                    state = 'INVALID';
+                if (m) {
+                    parts.push(m[1]);
+                    s = m[2];
+                    state = '?';
                     break;
                 }
 
-                s = m[2];
-                parts[parts.length] = m[1];
-                state = '?';
+                state = 'INVALID';
                 break;
 
             case '[':
                 m = R_OPEN_ACCESS.exec(s);
 
-                if (!m) {
-                    state = 'INVALID';
+                if (m) {
+                    s = m[2];
+                    state = m[1];
                     break;
                 }
 
-                s = m[3];
-
-                if (m[1]) {
-                    parts[parts.length] = parseInt(m[1], 10);
-                    state = ']';
-                    break;
-                }
-
-                state = m[2];
+                state = 'INVALID';
                 break;
 
             case '"':
                 m = R_STRING1.exec(s);
 
-                if (!m) {
-                    state = 'INVALID';
+                if (m) {
+                    parts.push(unescape(m[1]));
+                    s = m[2];
+                    state = ']';
                     break;
                 }
 
-                s = m[2];
-                parts[parts.length] = unescape(m[1]);
-                state = ']';
+                state = 'INVALID';
                 break;
 
             case '\'':
                 m = R_STRING2.exec(s);
 
-                if (!m) {
-                    state = 'INVALID';
+                if (m) {
+                    parts.push(unescape(m[1]));
+                    s = m[2];
+                    state = ']';
                     break;
                 }
 
-                s = m[2];
-                parts[parts.length] = unescape(m[1]);
-                state = ']';
+                state = 'INVALID';
                 break;
 
             case ']':
                 m = R_CLOSE_ACCESS.exec(s);
 
-                if (!m) {
-                    state = 'INVALID';
+                if (m) {
+                    s = m[1];
+                    state = '?';
                     break;
                 }
 
-                s = m[1];
-                state = '?';
+                state = 'INVALID';
                 break;
 
             default:
-                throw new SyntaxError(orig);
+                throw new SyntaxError(str);
 
         }
     }

@@ -49,12 +49,8 @@ describe('obus', function () {
                 ['foo']
             ],
             [
-                '[42]',
-                [42]
-            ],
-            [
-                '  [  42  ]  ',
-                [42]
+                '["42"]',
+                ['42']
             ],
             [
                 '  [  "42"  ]  ',
@@ -65,8 +61,8 @@ describe('obus', function () {
                 ['42']
             ],
             [
-                '.foo[42]',
-                ['foo', 42]
+                '.foo["42"]',
+                ['foo', '42']
             ],
             [
                 '_$Identity',
@@ -356,7 +352,7 @@ describe('obus', function () {
     describe('Obus.format', function () {
         var samples = [
             '.foo.bar',
-            '[1][2].foo',
+            '[\'1\'][\'2\'].foo',
             '[\'foo-bar\']',
             '[\'foo\\\'-bar\']'
         ];
