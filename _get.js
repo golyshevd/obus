@@ -1,17 +1,14 @@
 'use strict';
 
-var _own = require('./_own');
+var _obj = require('./_obj');
 
 function _get(obj, path) {
-    var i;
-    var k;
-    var l;
+    var i = 0;
+    var l = path.length;
 
-    for (i = 0, l = path.length; i < l; i += 1) {
-        k = path[i];
-
-        if (_own(obj, k)) {
-            obj = obj[k];
+    for (; i < l; i += 1) {
+        if (_obj(obj)) {
+            obj = obj[path[i]];
             continue;
         }
 

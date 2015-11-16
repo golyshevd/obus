@@ -141,6 +141,12 @@ describe('obus', function () {
                 'foo',
                 void 0,
                 'bar'
+            ],
+            [
+                {},
+                '.toString',
+                void 0,
+                Object.prototype.toString
             ]
         ];
 
