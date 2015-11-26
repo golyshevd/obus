@@ -5,16 +5,11 @@ var _obj = require('./_obj');
 var _own = require('./_own');
 
 function _add(obj, path, data) {
-    var i;
-    var k;
-    var l = path.length;
+    var i = 0;
+    var k = '';
+    var l = path.length - 1;
 
-    if (l === 0) {
-        _ext(obj, data);
-        return obj;
-    }
-
-    for (i = 0, l -= 1; i < l; i += 1) {
+    for (; i < l; i += 1) {
         k = path[i];
 
         if (_own(obj, k) && _obj(obj[k])) {

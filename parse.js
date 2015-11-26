@@ -7,14 +7,11 @@ var _parse = require('./_parse');
  * @returns {Array}
  * */
 function parse(path) {
-    var parts = [];
+    var parts = parse.cache.get(path);
 
-    if (typeof path === 'string') {
-        if (!parse.cache.peek(path)) {
-            parse.cache.set(path, _parse(path));
-        }
-
-        parts = parse.cache.get(path);
+    if (!parts) {
+        parts = _parse(path);
+        parse.cache.set(path, parts);
     }
 
     return parts;

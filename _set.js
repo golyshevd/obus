@@ -1,23 +1,14 @@
 'use strict';
 
-var _ext = require('./_ext');
 var _obj = require('./_obj');
 var _own = require('./_own');
-var _del = require('./_del');
 
 function _set(obj, path, data) {
-    var i;
-    var k;
-    var l = path.length;
+    var i = 0;
+    var k = '';
+    var l = path.length - 1;
 
-    if (l === 0) {
-        _del(obj, path);
-        _ext(obj, data);
-
-        return obj;
-    }
-
-    for (i = 0, l -= 1; i < l; i += 1) {
+    for (; i < l; i += 1) {
         k = path[i];
 
         if (_own(obj, k) && _obj(obj[k])) {

@@ -3,11 +3,11 @@
 var _own = require('./_own');
 
 function _has(obj, path) {
-    var i;
-    var k;
-    var l;
+    var i = 0;
+    var k = '';
+    var l = path.length;
 
-    for (i = 0, l = path.length; i < l; i += 1) {
+    for (; i < l; i += 1) {
         k = path[i];
 
         if (_own(obj, k)) {

@@ -108,6 +108,10 @@ function _parse(str) {
         }
     }
 
+    if (parts.length === 0) {
+        throw new SyntaxError(str);
+    }
+
     return parts;
 }
 

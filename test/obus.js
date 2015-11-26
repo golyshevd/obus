@@ -29,14 +29,6 @@ describe('obus', function () {
         var parse = Obus.parse;
         var samples = [
             [
-                '',
-                []
-            ],
-            [
-                '       ',
-                []
-            ],
-            [
                 ' foo ',
                 ['foo']
             ],
@@ -95,7 +87,9 @@ describe('obus', function () {
                 '["foo"',
                 '[',
                 '1123',
-                'foo-bar'
+                'foo-bar',
+                '',
+                '   '
             ];
 
             _.forEach(errors, function (s) {
@@ -215,12 +209,6 @@ describe('obus', function () {
                 'a.b',
                 42,
                 {a: {b: 42}}
-            ],
-            [
-                {a: 42},
-                void 0,
-                {b: 54},
-                {b: 54}
             ]
         ];
 
@@ -262,12 +250,6 @@ describe('obus', function () {
                 'a.b',
                 {d: 43},
                 {a: {b: {c: 42, d: 43}}}
-            ],
-            [
-                {},
-                void 0,
-                {a: 42},
-                {a: 42}
             ]
         ];
 

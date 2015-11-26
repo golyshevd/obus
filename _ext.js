@@ -1,12 +1,12 @@
 'use strict';
 
 function _ext(obj, src) {
-    var i;
-    var k;
-    var l;
+    var i = 0;
+    var k = '';
     var keys = Object.keys(src);
+    var l = keys.length;
 
-    for (i = 0, l = keys.length; i < l; i += 1) {
+    for (; i < l; i += 1) {
         k = keys[i];
         obj[k] = src[k];
     }
