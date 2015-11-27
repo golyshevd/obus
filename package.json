@@ -17,7 +17,7 @@
     "istanbul": "0.4.1",
     "eslint": "~1.10.1",
     "benchmark": "~1.0.0",
-    "jscs": "2.6.0"
+    "jscs": "~2.6.0"
   },
   "license": "MIT",
   "main": "obus",
