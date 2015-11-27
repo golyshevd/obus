@@ -1,3 +1,4 @@
+#!/usr/bin/env mocha
 /*global describe, it*/
 'use strict';
 
