@@ -9,10 +9,11 @@ function _get(obj, path) {
     for (; i < l; i += 1) {
         if (_obj(obj)) {
             obj = obj[path[i]];
+
             continue;
         }
 
-        return undefined;
+        return undefined; // eslint-disable-line no-undefined
     }
 
     return obj;

@@ -3,7 +3,9 @@
 /**
  * @class Obus
  * */
-function Obus() {}
+function Obus() {
+    // noop
+}
 
 /**
  * @public

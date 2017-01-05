@@ -1,5 +1,4 @@
-*.log
-.idea
-.DS_Store
-node_modules
+/.npm
 /coverage
+/node_modules
+*.log

@@ -6,7 +6,7 @@ var parse = require('./parse');
 function get(obj, path, def) {
     obj = _get(obj, parse(path));
 
-    if (obj === undefined) {
+    if (typeof obj === 'undefined') {
         return def;
     }
 

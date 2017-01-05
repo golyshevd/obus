@@ -1,6 +1,6 @@
 'use strict';
 
-var R_DEGRADE = /^\s*[^\s.\[]/;
+var R_DEGRADE = /^\s*[^\s.[]/;
 var R_SEARCH = /^\s*([^\s])([\s\S]*)$/;
 var R_IDENT = /^\s*([_a-z$][\w$]*)([\s\S]*)$/i;
 var R_OPEN_ACCESS = /^\s*(['"])([\s\S]*)$/;
@@ -8,12 +8,13 @@ var R_STRING1 = /^((?:\\[\s\S]|[^"])*)"([\s\S]*)$/;
 var R_ESCAPED = /\\([\s\S])/g;
 var R_STRING2 = /^((?:\\[\s\S]|[^'])*)'([\s\S]*)$/;
 var R_CLOSE_ACCESS = /^\s*]([\s\S]*)$/;
+
 function unescape(s) {
     return s.replace(R_ESCAPED, '$1');
 }
 
 function _parse(str) {
-    /*eslint complexity: 0*/
+    /* eslint complexity: 0 */
     var s = str;
     var m;
     var state = '?';
@@ -106,10 +107,6 @@ function _parse(str) {
                 throw new SyntaxError(str);
 
         }
-    }
-
-    if (parts.length === 0) {
-        throw new SyntaxError(str);
     }
 
     return parts;

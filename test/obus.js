@@ -88,9 +88,7 @@ describe('obus', function () {
                 '["foo"',
                 '[',
                 '1123',
-                'foo-bar',
-                '',
-                '   '
+                'foo-bar'
             ];
 
             _.forEach(errors, function (s) {
